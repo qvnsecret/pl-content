@@ -1,0 +1,51 @@
+const { MessageButton, MessageActionRow, MessageEmbed, Client, MessageSelectMenu } = require("discord.js");
+const { glob } = require("glob");
+const { promisify } = require("util");
+
+module.exports = {
+    name: "social",
+    description: 'social media',
+    aliases: [],
+    run: async (client,message, args) => {
+
+  let button = new MessageActionRow()
+        .addComponents(
+            new MessageButton()
+  .setStyle('LINK')
+  .setLabel('Facebook')
+  .setURL(`eee`))
+
+       .addComponents(
+            new MessageButton()
+  .setStyle('LINK')
+  .setLabel('Twitter')
+  .setURL(`eeee`))
+
+       .addComponents(
+            new MessageButton()
+  .setStyle('LINK')
+  .setLabel('Instagram')
+  .setURL(`ee`))
+
+        .addComponents(
+            new MessageButton()
+  .setStyle('LINK')
+  .setLabel('YouTube')
+  .setURL(`eeee`))
+
+    let embed = new MessageEmbed()
+.setTitle(`Social Media`)      
+.setImage(`eeee`)
+
+.setColor(message.guild.me.displayHexColor)
+
+      .setTimestamp()
+
+    message.reply({ embeds:[embed], components:[button] })
+          },
+};
+
+
+
+
+${client.config.prefix}help
