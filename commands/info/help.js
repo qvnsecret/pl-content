@@ -53,7 +53,7 @@ module.exports = {
   .setURL(`https://discord.com/invite/886Z9JUdXY`))
     let embed = new MessageEmbed()    
 
-    .setTitle(`**Aesthetical**`, message.guild.iconURL({ dynamic: true }))
+    .setTitle(`**Aesthetical**`)
     .setDescription(`**If you have any question contact to *ogqvnrvx* or our Bug Server!**`)  
     .setThumbnail(`https://cdn.discordapp.com/attachments/1223568250810404925/1223568278719561769/noFilter.png?ex=661a53c2&is=6607dec2&hm=85090d587e60078ca67e9b5750ea35688773b494e4fa9de2e317dd52f6dc4181&`)
       .setFooter(`This bot isn't made by the offical roblox Aesthetical. This bot was made for educational purposes only.`)
