@@ -12,8 +12,8 @@ module.exports = {
         const embed = new MessageEmbed()
             .setTitle('Aesthetical Stats')
             .addFields(
-                { name: 'Number of Servers', value: `\`\`\`${guilds.size}`\`\`\`, inline: true },
-                { name: 'Total Members', value: `\`\`\`${totalMembers}`\`\`\`, inline: true },
+                { name: 'Number of Servers', value: `\`\`\`${guilds.size}\`\`\``, inline: true },
+                { name: 'Total Members', value: `\`\`\`${totalMembers}\`\`\``, inline: true },
             )
             .setColor(message.guild.me.displayHexColor)
             .setTimestamp();
