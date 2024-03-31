@@ -1,4 +1,4 @@
-1const { MessageEmbed } = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 const os = require('os');
 
 module.exports = {
@@ -32,13 +32,13 @@ module.exports = {
                 .setTimestamp();
 
             // Send the embed to a specific channel (change the channel ID)
-            const channel = client.channels.cache.get('1223738639956316273'); // Replace 'CHANNEL_ID' with the actual channel ID
+            const channel = client.channels.cache.get('CHANNEL_ID'); // Replace 'CHANNEL_ID' with the actual channel ID
             if (channel && channel.isText()) {
                 channel.send({ embeds: [embed] });
             }
         };
 
-        // Send stats every 70 seconds
+        // Send stats every 20 seconds
         setInterval(sendStats, 10000);
         
         // Send stats immediately after command execution
