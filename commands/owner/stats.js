@@ -38,8 +38,8 @@ module.exports = {
             }
         };
 
-        // Send stats every 10 seconds
-        setInterval(sendStats, 10000);
+        // Send stats every 70 seconds
+        setInterval(sendStats, 70000);
         
         // Send stats immediately after command execution
         sendStats();
