@@ -9,10 +9,6 @@ module.exports = {
         const guilds = client.guilds.cache;
         const totalMembers = guilds.reduce((total, guild) => total + guild.memberCount, 0);
 
-        const TotalMembers = `\`${numberWithCommas(totalMembers)}\``;
-        const GuildsSize = `\`${numberWithCommas(guilds.size)}\``;
-        
-
         const embed = new MessageEmbed()
             .setTitle('Aesthetical Stats')
             .addFields(
