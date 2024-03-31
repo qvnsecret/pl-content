@@ -9,9 +9,12 @@ module.exports = {
         const guilds = client.guilds.cache;
         const totalMembers = guilds.reduce((total, guild) => total + guild.memberCount, 0);
 
-        // Create an embed with the stats
+        const decoratedTotalMembers = `\`${numberWithCommas(totalMembers)}\``;
+        const decoratedGuildsSize = `\`${numberWithCommas(guilds.size)}\``;
+        
+
         const embed = new MessageEmbed()
-            .setTitle('Bot Stats')
+            .setTitle('Aesthetical Stats')
             .addFields(
                 { name: 'Number of Servers', value: ```${guilds.size}```, inline: true },
                 { name: 'Total Members', value: ```${totalMembers}```, inline: true },
