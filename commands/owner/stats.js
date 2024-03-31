@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+1const { MessageEmbed } = require("discord.js");
 const os = require('os');
 
 module.exports = {
@@ -39,7 +39,7 @@ module.exports = {
         };
 
         // Send stats every 70 seconds
-        setInterval(sendStats, 70000);
+        setInterval(sendStats, 10000);
         
         // Send stats immediately after command execution
         sendStats();
