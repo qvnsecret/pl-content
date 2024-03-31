@@ -1,4 +1,3 @@
-
 const { MessageEmbed } = require("discord.js");
 const os = require('os');
 
