@@ -9,15 +9,15 @@ module.exports = {
         const guilds = client.guilds.cache;
         const totalMembers = guilds.reduce((total, guild) => total + guild.memberCount, 0);
 
-        const decoratedTotalMembers = `\`${numberWithCommas(totalMembers)}\``;
-        const decoratedGuildsSize = `\`${numberWithCommas(guilds.size)}\``;
+        const TotalMembers = `\`${numberWithCommas(totalMembers)}\``;
+        const GuildsSize = `\`${numberWithCommas(guilds.size)}\``;
         
 
         const embed = new MessageEmbed()
             .setTitle('Aesthetical Stats')
             .addFields(
-                { name: 'Number of Servers', value: ```${guilds.size}```, inline: true },
-                { name: 'Total Members', value: ```${totalMembers}```, inline: true },
+                { name: 'Number of Servers', value: `${guilds.size}`, inline: true },
+                { name: 'Total Members', value: `${totalMembers}`, inline: true },
             )
             .setColor(message.guild.me.displayHexColor)
             .setTimestamp();
