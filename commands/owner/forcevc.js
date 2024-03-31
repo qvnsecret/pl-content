@@ -1,8 +1,8 @@
 const { MessageEmbed } = require("discord.js");
 
 module.exports = {
-    name: 'forcevc',
-    description: 'will make the bot join a vc you are',
+    name: 'joinvc',
+    description: 'Join a voice channel and deafen the bot',
     run: async (client, message, args) => {
         // Check if the user is in a guild (server)
         if (!message.guild) {
@@ -25,8 +25,8 @@ module.exports = {
 
         // Check if the bot has permission to join and speak in the channel
         const permissions = voiceChannel.permissionsFor(message.client.user);
-        if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
-            return message.reply('I don\'t have permission to join or speak in that voice channel.');
+        if (!permissions.has('CONNECT') || !permissions.has('SPEAK') || !permissions.has('DEAFEN_MEMBERS')) {
+            return message.reply('I don\'t have the necessary permissions to join, speak, or deafen in that voice channel.');
         }
 
         try {
