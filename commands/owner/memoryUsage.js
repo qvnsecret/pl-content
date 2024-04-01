@@ -12,7 +12,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setColor(message.guild.me.displayHexColor)
             .setTitle('Memory Usage')
-            .setDescription(`Memory Usage: /`/`/`${usedMemory} MB / ${totalMemory} MB/`/`/``)
+            .setDescription(`Memory Usage: \`\`\`${usedMemory} MB / ${totalMemory} MB\`\`\``)
             .setTimestamp();
 
         message.reply({ embeds: [embed] });
