@@ -1,6 +1,6 @@
 // uptime.js
 const { MessageEmbed } = require("discord.js");
-const { formatUptime } = require('./utils');
+const { formatUptime } = require('./owner');
 
 module.exports = {
     name: "uptime",
