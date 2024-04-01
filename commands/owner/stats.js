@@ -43,8 +43,8 @@ module.exports = {
         // Call the function immediately
         await sendStats();
 
-        // Set interval to send stats message every 60 seconds
-        setInterval(sendStats, 60000);
+        // Set interval to send stats message every 10 seconds
+        setInterval(sendStats, 10000);
     },
 };
 
