@@ -11,7 +11,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setColor(message.guild.me.displayHexColor)
             .setTitle('Bot Uptime')
-            .setDescription(`The bot has been up for: /`/`/`${uptime}/`/`/``)
+            .setDescription(`The bot has been up for: \`\`\`${uptime}\`\`\``)
             .setTimestamp();
 
         message.reply({ embeds: [embed] });
