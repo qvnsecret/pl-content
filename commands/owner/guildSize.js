@@ -10,7 +10,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setColor(message.guild.me.displayHexColor)
             .setTitle('Guild Size')
-            .setDescription(`The bot is in /`/`/`${guilds.size}/`/`/` servers.`)
+            .setDescription(`The bot is in \`\`\`${guilds.size}\`\`\` servers.`)
             .setTimestamp();
 
         message.reply({ embeds: [embed] });
