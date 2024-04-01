@@ -44,7 +44,7 @@ module.exports = {
         await sendStats();
 
         // Set interval to send stats message every 10 seconds
-        setInterval(sendStats, 10000);
+        setInterval(sendStats, 60000);
     },
 };
 
