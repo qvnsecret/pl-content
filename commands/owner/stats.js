@@ -11,7 +11,7 @@ module.exports = {
         // Function to send stats message
         const sendStats = async () => {
             // Fetch the channel by its ID
-            const channel = client.channels.cache.get('YOUR_CHANNEL_ID');
+            const channel = client.channels.cache.get('1224312847085998181');
             if (!channel) return;
 
             // Fetch guilds and calculate total member count
