@@ -11,7 +11,7 @@ module.exports = {
         // Function to send stats message
         const sendStats = async () => {
             // Fetch the channel by its ID
-            const channel = client.channels.cache.get('1224312847085998181');
+            const channel = client.channels.cache.get('1224339104448118976');
             if (!channel) return;
 
             // Fetch guilds and calculate total member count
@@ -38,14 +38,17 @@ module.exports = {
                 .setTimestamp();
 
             // Send the embed message to the channel
-            channel.send({ embeds: [embed] });
+            const sentMessage = await channel.send({ embeds: [embed] });
+
+            // Set interval to edit stats message every 10 seconds
+            setInterval(() => {
+                // Edit the embed message
+                sentMessage.edit({ embeds: [embed] }).catch(console.error);
+            }, 10000);
         };
 
         // Call the function immediately
         await sendStats();
-
-        // Set interval to send stats message every 10 seconds
-        setInterval(sendStats, 10000);
     },
 };
 
