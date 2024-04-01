@@ -10,7 +10,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setColor('#0099ff')
             .setTitle('Total Members')
-            .setDescription(`The bot has /`/`/`${totalMembers}/`/`/`` total members.`)
+            .setDescription(`The bot has \`\`\`${totalMembers}\`\`\` total members.`)
             .setTimestamp();
 
         message.reply({ embeds: [embed] });
