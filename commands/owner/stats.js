@@ -21,7 +21,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setTitle('Aesthetical Stats')
             .setDescription(`Guilds: \`${guilds.size}\` - Members: \`${totalMembers}\` - Uptime: \`${uptime}\` - Memory: \`${memoryUsage}\``)
-            .setColor(`2b2d31`)
+            .setColor(`#2b2d31`)
             .setTimestamp();
 
         // Reply to the message with the embed
