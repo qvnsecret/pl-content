@@ -9,7 +9,7 @@ module.exports = {
         const pingEmbed = new MessageEmbed()
             .setColor("#0099ff")
             .setTitle(":ping_pong: Pong!")
-            .setDescription(`Response time: ${client.ws.ping} ms`);
+            .setDescription(`Response time: ${client.ws.ping} ms. For any bug report [here](https://discord.gg/dpxybg8ZbD)`);
 
         interaction.followUp({ embeds: [pingEmbed] });
     },
