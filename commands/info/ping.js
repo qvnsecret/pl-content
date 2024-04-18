@@ -7,7 +7,7 @@ module.exports = {
 
     run: async (client, message, args) => {
         const pingEmbed = new MessageEmbed()
-            .setColor("#0099ff")
+            .setColor("#2b2d31")
             .setDescription(`:green_circle: | ${client.ws.ping} ms`);
 
         message.reply({ embeds: [pingEmbed] });
