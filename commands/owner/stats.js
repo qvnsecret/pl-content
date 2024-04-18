@@ -21,12 +21,12 @@ module.exports = {
         const embed = new MessageEmbed()
             .setTitle('Aesthetical Stats')
             .addFields(
-                { name: 'Number of Servers', value: `\`\`\`${guilds.size}\`\`\``, inline: true },
-                { name: 'Total Members', value: `\`\`\`${totalMembers}\`\`\``, inline: true },
-                { name: 'Uptime', value: `\`\`\`${uptime}\`\`\``, inline: false },
-                { name: 'Memory Usage', value: `\`\`\`${memoryUsage}\`\`\``, inline: false },
+                { name: 'Number of Servers', value: `\`${guilds.size}\``, inline: true },
+                { name: 'Total Members', value: `\`${totalMembers}\``, inline: true },
+                { name: 'Uptime', value: `\`${uptime}\``, inline: true },
+                { name: 'Memory Usage', value: `\`${memoryUsage}\``, inline: true },
             )
-            .setColor(`2b2d31`
+            .setColor(`2b2d31`)
             .setTimestamp();
 
         // Reply to the message with the embed
