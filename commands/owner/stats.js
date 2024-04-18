@@ -26,6 +26,12 @@ module.exports = {
                 { name: 'Uptime', value: `\`\`\`${uptime}\`\`\``, inline: false },
                 { name: 'Memory Usage', value: `\`\`\`${memoryUsage}\`\`\``, inline: false },
             )
+            .setColor(`2b2d31`
+            .setTimestamp();
+
+                const embed = new MessageEmbed()
+            .setTitle('Aesthetical Stats')
+            .addFields(`Guild - `\${guilds.size}`\ `)
             .setColor(message.guild.me.displayHexColor)
             .setTimestamp();
 
