@@ -1,11 +1,16 @@
-const { Message, Client, CommandInteraction } = require("discord.js");
+const { Message, Client, CommandInteraction, MessageEmbed } = require("discord.js");
 
 module.exports = {
-        name: "ping",
-        description: `Test the bots response time.`,
-        type: 'CHAT_INPUT',
-  
-        run: async (client, interaction, args) => {
-    interaction.followUp({ content: `:ping_pong: **Pong ${client.ws.ping} ms**` });
+    name: "ping",
+    description: "Test the bot's response time.",
+    type: 'CHAT_INPUT',
+
+    run: async (client, interaction, args) => {
+        const pingEmbed = new MessageEmbed()
+            .setColor("#0099ff")
+            .setTitle(":ping_pong: Pong!")
+            .setDescription(`Response time: ${client.ws.ping} ms`);
+
+        interaction.followUp({ embeds: [pingEmbed] });
     },
 };
