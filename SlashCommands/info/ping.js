@@ -7,8 +7,7 @@ module.exports = {
 
     run: async (client, interaction, args) => {
         const pingEmbed = new MessageEmbed()
-            .setColor("#0099ff")
-            .setTitle(":ping_pong: Pong!")
+            .setColor("#2b2d31")
             .setDescription(`Response time: ${client.ws.ping} ms. For any bug report [here](https://discord.gg/dpxybg8ZbD)`);
 
         interaction.followUp({ embeds: [pingEmbed] });
