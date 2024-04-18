@@ -1,10 +1,15 @@
-const { Message, Client } = require("discord.js");
+const { Message, Client, MessageEmbed } = require("discord.js");
 
 module.exports = {
-        name: "ping",
-        description: `Test the bots response time.`,
-        aliases: [],
-        run: async (client, message, args) => {
-                message.reply({ content:`**<:tick:1220474968031105094> | Pong ${client.ws.ping} ms**`});
-        },
+    name: "ping",
+    description: "Test the bot's response time.",
+    aliases: [],
+
+    run: async (client, message, args) => {
+        const pingEmbed = new MessageEmbed()
+            .setColor("#0099ff")
+            .setDescription(`:green_circle: | ${client.ws.ping} ms`);
+
+        message.reply({ embeds: [pingEmbed] });
+    },
 };
