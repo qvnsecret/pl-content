@@ -13,7 +13,7 @@ module.exports = {
       .setImage(`https://static.wikia.nocookie.net/meme-basement/images/c/c0/C2a7885a3916fc003b44656851d9d5b8.jpg/revision/latest?cb=20191225232843`)
       .setFooter(`eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee`)
 
-      .setColor(message.guild.me.displayHexColor)
+      .setColor(`#2b2d31`)
 
             .setTimestamp()
 
