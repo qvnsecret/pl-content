@@ -101,7 +101,7 @@ module.exports = {
         } else if(b.values[0] === "owner")
   {
 let embed_1 = new MessageEmbed()
-       .setColor(message.guild.me.displayHexColor) 
+       .setColor(`#2b2d31`)
       .setTimestamp()
                  
     ownerFiles.map((value) => {
