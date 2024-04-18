@@ -29,12 +29,6 @@ module.exports = {
             .setColor(`2b2d31`
             .setTimestamp();
 
-                const embed = new MessageEmbed()
-            .setTitle('Aesthetical Stats')
-            .addFields(`Guild - `\${guilds.size}`\ `)
-            .setColor(message.guild.me.displayHexColor)
-            .setTimestamp();
-
         // Reply to the message with the embed
         message.reply({ embeds: [embed] });
     },
