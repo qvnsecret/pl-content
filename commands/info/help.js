@@ -66,7 +66,6 @@ module.exports = {
       let filter = b => b.user.id === message.author.id && b.customId === `help_${message.author.id}`;
       let collector = msg.createMessageComponentCollector({ filter:filter, componentType: 'SELECT_MENU', time:120000 });
       collector.on("collect", (b) => {
-	      b.update({ embeds:[embed_1], components:[row, button] }).catch(err => {}); 
         else if(b.values[0] === "admin") {   
       let embed_1 = new MessageEmbed()
        .setColor(`#2b2d31`)
