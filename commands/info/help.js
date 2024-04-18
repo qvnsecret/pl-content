@@ -60,15 +60,16 @@ module.exports = {
 	    .setImage('https://cdn.discordapp.com/attachments/1218607459925753969/1229064062051291297/discordstatus_4.png?ex=662e521b&is=661bdd1b&hm=72f4b2365b4f0330643d98517e1f30e9cc85a7c068e1c73848fd740736f60a8c&')
       .setFooter(`This bot isn't made by the offical roblox Aesthetical. This bot was made for educational purposes only.`)
 
-.setColor(message.guild.me.displayHexColor)
+.setColor(`#2b2d31`)
       .setTimestamp()
     message.reply({ embeds:[embed], components:[row, button] }).then( msg => {
       let filter = b => b.user.id === message.author.id && b.customId === `help_${message.author.id}`;
       let collector = msg.createMessageComponentCollector({ filter:filter, componentType: 'SELECT_MENU', time:120000 });
       collector.on("collect", (b) => {
-        if(b.values[0] === "admin") {   
+	      b.update({ embeds:[embed_1], components:[row, button] }).catch(err => {}); 
+        else if(b.values[0] === "admin") {   
       let embed_1 = new MessageEmbed()
-       .setColor(message.guild.me.displayHexColor) 
+       .setColor(`#2b2d31`)
       .setTimestamp()
           
     adminFiles.map((value) => {
@@ -84,7 +85,7 @@ module.exports = {
           b.update({ embeds:[embed_1], components:[row, button] }).catch(err => {});
         } else if(b.values[0] === "info") {
       let embed_1 = new MessageEmbed()
-       .setColor(message.guild.me.displayHexColor) 
+       .setColor(`#2b2d31`)
       .setTimestamp()
                  
     infoFiles.map((value) => {
