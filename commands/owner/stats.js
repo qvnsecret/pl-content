@@ -21,10 +21,10 @@ module.exports = {
         const embed = new MessageEmbed()
             .setTitle('Aesthetical Stats')
             .addFields(
-                { name: `Guilds`, value: `Guilds \`${guilds.size}\``, inline: true },
-                { name: `Members`, value: `Total Members \`${totalMembers}\``, inline: true },
-                { name: `Uptime`, value: `Uptime \`${uptime}\``, inline: true },
-                { name: `Memory`, value: `Memory \`${memoryUsage}\``, inline: true },
+                { value: `Guilds \`${guilds.size}\``, inline: true },
+                { value: `Total Members \`${totalMembers}\``, inline: true },
+                { value: `Uptime \`${uptime}\``, inline: true },
+                { value: `Memory \`${memoryUsage}\``, inline: true },
             )
             .setColor(`2b2d31`)
             .setTimestamp();
