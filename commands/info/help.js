@@ -54,7 +54,7 @@ module.exports = {
     let embed = new MessageEmbed()    
 
     .setTitle(`**Mytho**`)
-    .setDescription(`**Thank you for choosing our bot, <:mytho:1230996358081544222> `Mytho`. Below, you'll find a comprehensive list of all available commands for your convenience.**
+    .setDescription(`**Thank you for choosing our bot, <:mytho:1230996358081544222> \`Mytho\`. Below, you\'ll find a comprehensive list of all available commands for your convenience.**
     Bot Prefix: ${client.config.prefix}help`)
 	                .addFields(
                 { name: '# Info', value: `edeedededed`, inline: true };
