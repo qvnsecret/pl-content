@@ -1,7 +1,7 @@
 const { Message, Client, MessageEmbed } = require("discord.js");
 
 module.exports = {
-        name: "remove-role",
+        name: "unrole",
         description: `remove a role for a user.`,
         run: async (client, message, args) => {
                 const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
