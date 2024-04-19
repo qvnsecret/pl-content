@@ -1,7 +1,7 @@
-const config = require("../config") 
+const config = require("config.js") 
 
 const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js") 
-const client = require("../../index") 
+const client = require("index.js") 
 client.on('guildCreate', guild => {
     const channel = guild.channels.cache.find(channel => channel.type === 'GUILD_TEXT' && channel.permissionsFor(guild.me).has('SEND_MESSAGES'))
  let embed = new MessageEmbed()
