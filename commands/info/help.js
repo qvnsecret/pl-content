@@ -53,9 +53,12 @@ module.exports = {
   .setURL(`https://discord.com/invite/886Z9JUdXY`))
     let embed = new MessageEmbed()    
 
-    .setTitle(`**Aesthetical**`)
-    .setDescription(`**If you have any question contact to *ogqvnrvx* or our Bug Server!**
-    Bot Prefix: ${client.config.prefix}help`)  
+    .setTitle(`**Mytho**`)
+    .setDescription(`**"Thank you for choosing our bot, <:mytho:1230996358081544222> `Mytho`. Below, you'll find a comprehensive list of all available commands for your convenience."**
+    Bot Prefix: ${client.config.prefix}help`)
+	                .addFields(
+                { name: '# Info', value: `edeedededed`, inline: true };
+            )
     .setThumbnail(`https://cdn.discordapp.com/attachments/1223568250810404925/1223568278719561769/noFilter.png?ex=661a53c2&is=6607dec2&hm=85090d587e60078ca67e9b5750ea35688773b494e4fa9de2e317dd52f6dc4181&`)
 	    .setImage('https://cdn.discordapp.com/attachments/1218607459925753969/1229064062051291297/discordstatus_4.png?ex=662e521b&is=661bdd1b&hm=72f4b2365b4f0330643d98517e1f30e9cc85a7c068e1c73848fd740736f60a8c&')
       .setFooter(`This bot isn't made by the offical roblox Aesthetical. This bot was made for educational purposes only.`)
