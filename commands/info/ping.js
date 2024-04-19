@@ -8,7 +8,7 @@ module.exports = {
     run: async (client, message, args) => {
         const pingEmbed = new MessageEmbed()
             .setColor("#2b2d31")
-            .setDescription(`Response time: ${client.ws.ping} ms. For any bug report [here](https://discord.gg/dpxybg8ZbD)`);
+            .setDescription(`<:mytho:1230996358081544222> | Response time: ${client.ws.ping} ms. For any bug report [here](https://discord.gg/dpxybg8ZbD)`);
 
         message.reply({ embeds: [pingEmbed] });
     },
