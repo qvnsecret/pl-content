@@ -3,5 +3,5 @@ const client = require("../index");
 client.on('ready', () => {
 console.log(`I'am ${client.user.tag}, the best bot & app in the world :skull:`)
   client.user.setStatus("idle")
-    client.user.setActivity(`& PROTECTING`, { type: 'WATCHING' })
+    client.user.setActivity(`& Protecting`, { type: 'WATCHING' })
 });
