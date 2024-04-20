@@ -13,11 +13,17 @@ module.exports = {
             new MessageButton()
   .setStyle('LINK')
   .setLabel('Invite the Bot')
-  .setURL(`https://discord.com/oauth2/authorize?client_id=1223343717184835754`))
+  .setURL(`https://discord.com/oauth2/authorize?client_id=1223343717184835754`)
+
+            new MessageButton()
+  .setStyle('LINK')
+  .setLabel('Bug Server')
+  .setURL(`https://discord.gg/5enJVWgY4m`)
+        )
 
     let embed = new MessageEmbed()
 .setTitle(`Support & Invite`) 
-.setDescription(`This bot was made by \`ogqvnrvx\`. This bot isn't made by the offical roblox Aesthetical. This bot was made for educational purposes only. We have a favor for you, [invite](https://discord.com/oauth2/authorize?client_id=1223343717184835754) and join our [Support Server](https://discord.gg/637NNhhS8n) :)`)     
+.setDescription(`We have a favor for you, [invite](https://discord.com/oauth2/authorize?client_id=1223343717184835754) and join our [Support Server](https://discord.gg/637NNhhS8n) If you really wanna support us and [invite](https://discord.com/oauth2/authorize?client_id=1223343717184835754) our bot to reach our goal, we appreciate it alot.\nGoal: \`${guilds.size} / 100\``)     
 .setColor(`#2b2d31`)
 
       .setTimestamp()
