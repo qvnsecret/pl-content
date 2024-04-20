@@ -1,4 +1,4 @@
-const { Message, Client } = require("discord.js");
+const { MessageEmbed, Client } = require("discord.js");
 
 module.exports = {
     name: "notify",
@@ -16,21 +16,24 @@ module.exports = {
             return message.channel.send("Please provide a message to send to all server owners.");
         }
 
-        const guilds = client.guilds.cache.array();
+        // This fetches all guilds the client is currently handling
+        const guilds = client.guilds.cache;
         let successful = 0;
         let failed = 0;
 
-        for (const guild of guilds) {
+        // Loop through each guild and send the notification to the owner
+        for (const guild of guilds.values()) {
             try {
+                // Fetch the owner as a user object and send them the notification
                 const owner = await client.users.fetch(guild.ownerId);
                 await owner.send(notification);
                 successful++;
             } catch (error) {
-                console.error(`Failed to send message to the owner of ${guild.name}.`, error);
+                console.error(`Failed to send message to the owner of ${guild.name}:`, error);
                 failed++;
             }
         }
 
-        message.channel.send(`Notification sent successfully to ${successful} server owners, failed to send to ${failed} owners.`);
+        message.channel.send(`Notification sent successfully to ${successful} server owners; failed to send to ${failed} owners.`);
     },
 };
