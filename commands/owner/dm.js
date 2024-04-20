@@ -1,7 +1,7 @@
 const { Message, Client } = require("discord.js");
 
 module.exports = {
-        name: "send",
+        name: "dm",
         description: `sends a message to the target.`,
         run: async (client, message, args) => {
   const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
