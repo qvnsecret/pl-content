@@ -21,7 +21,6 @@ module.exports = {
             .setDescription(`**Thank you for choosing our bot, <:mytho:1230996358081544222> \`Mytho\`. Below, you'll find a comprehensive list of all available commands for your convenience.**\nBot Prefix: ${client.config.prefix}help`)
             .setColor(`#2b2d31`)
             .setTimestamp()
-            .setFooter(`Mytho, best bot ever`)
 
         // Categories are assumed to be in the order of admin, info, owner from Promise.all result
         const categories = ['Admin', 'Info', 'Owner'];
