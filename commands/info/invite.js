@@ -13,13 +13,13 @@ module.exports = {
             new MessageButton()
   .setStyle('LINK')
   .setLabel('Invite the Bot')
-  .setURL(`https://discord.com/oauth2/authorize?client_id=1223343717184835754`)
+  .setURL(`https://discord.com/oauth2/authorize?client_id=1223343717184835754`))
 
+            .addComponents()
             new MessageButton()
   .setStyle('LINK')
   .setLabel('Bug Server')
-  .setURL(`https://discord.gg/5enJVWgY4m`)
-        )
+  .setURL(`https://discord.gg/5enJVWgY4m`))
 
     let embed = new MessageEmbed()
 .setTitle(`Support & Invite`) 
