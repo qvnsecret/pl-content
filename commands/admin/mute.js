@@ -1,83 +1,82 @@
-const { Message, Client } = require("discord.js");
-
+const { MessageEmbed } = require("discord.js");
 const ms = require("ms");
-const db = require('quick.db')
-
+const db = require('quick.db');
 
 module.exports = {
-        name: "mute",
-        description: `Mute a member from text channels so they cannot type.`,
-        run: async (client, message, args) => {
-                const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-        var time = args[1]
-        if (!time) time = '24h'
+    name: "mute",
+    description: "Mute a member from text channels so they cannot type.",
+    run: async (client, message, args) => {
+        const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
+        var time = args[1] ? ms(args[1]) : ms('24h');
 
-                const permission = message.member.permissions.has("MANAGE_ROLES");
-                const guilds = message.guild.me.permissions.has("MANAGE_ROLES");
+        const permission = message.member.permissions.has("MANAGE_ROLES");
+        const botPermission = message.guild.me.permissions.has("MANAGE_ROLES");
 
-                if (!permission)
-                        return message.reply(
-                                { content: ":x: **You don't have permission to use this command**", ephemeral: true }
-                        ).catch((err) => {
-                                console.log(`i couldn't reply to the message: ` + err.message)
-                        })
-             
+        if (!permission) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("**You don't have permission to use this command**");
+            return message.reply({ embeds: [embed] }).catch(err => console.log(err.message));
+        }
 
-              if (!args[0]) return message.reply({ content: `:rolling_eyes: **Please mention member or id**`, ephemeral: true }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (!args[0] || !member) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("**Please mention a member or provide their ID**");
+            return message.reply({ embeds: [embed] }).catch(err => console.log(err.message));
+        }
 
-                if (!member) return message.reply({ content: `:rolling_eyes: **I can't find this member**`, ephemeral: true }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })         
+        if (!botPermission) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("**I don't have the permissions to mute members. Please check my permissions and role position.**");
+            return message.reply({ embeds: [embed] }).catch(err => console.log(err.message));
+        }
 
-                if (member.id === message.member.id)
-                        return message.reply({ content: `:rolling_eyes: **You can't mute ${member.user.username}**`, ephemeral: true }).catch((err) => {
-                                console.log(`i couldn't reply to the message: ` + err.message)
-                        })
+        if (message.member.roles.highest.position <= member.roles.highest.position) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription(`**You can't mute ${member.user.username} because they have a higher or equal role.**`);
+            return message.reply({ embeds: [embed] }).catch(err => console.log(err.message));
+        }
 
-                if (message.member.roles.highest.position < member.roles.highest.position)
-                        return message.reply({
-                                content:
-                                        `:rolling_eyes: **You can't mute ${member.user.username} have higher role than you**`
-                                , ephemeral: true
-                        }).catch((err) => {
-                                console.log(`i couldn't reply to the message: ` + err.message)
-                        })
+        let muteRole = message.guild.roles.cache.find(role => role.name === "Muted");
+        if (!muteRole) {
+            try {
+                muteRole = await message.guild.roles.create({
+                    data: {
+                        name: "Muted",
+                        permissions: []
+                    }
+                });
+                message.guild.channels.cache.forEach(channel => {
+                    channel.permissionOverwrites.edit(muteRole, {
+                        SEND_MESSAGES: false,
+                        ADD_REACTIONS: false
+                    });
+                });
+            } catch (err) {
+                console.log(err);
+                return message.reply({ content: "**Failed to create the 'Muted' role. Please check my permissions.**" });
+            }
+        }
 
-                if (!guilds) return message.reply({ content: `:rolling_eyes: **I couldn't mute that user. Please check my permissions and role position.**`, ephemeral: true }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        try {
+            await member.roles.add(muteRole);
+            db.set(`MutedMember_${member.id}`, true);
+            message.reply({ content: `**${member.user.username} has been muted for ${ms(time, { long: true })}.**` });
 
-                let muteRole = message.guild.roles.cache.find((role) => role.name == "Mute");
-                if (!muteRole) {
-                        message.guild.roles.create({
-            name: "Mute",
-                        }).then((createRole) => {
-                                message.guild.channels.cache.filter((c) => c.type == "GUILD_TEXT").forEach(c => {
-                                        c.permissionOverwrites.edit(createRole, {
-                                                SEND_MESSAGES: false,
-        ADD_REACTIONS: false                                 
-                                        })
-                                })
-                                message.reply({ content: `:x: **Muted role is not created. please run the command again.**`, ephemeral: true }).catch((err) => {
-                                        console.log(`i couldn't reply to the message: ` + err.message)
-                                })
-                        })
-                } else {
-                        message.guild.members.cache.get(member.id)?.roles.add(muteRole);
-                        message.reply({ content: `:white_check_mark: **${member.user.username} muted from the text! :zipper_mouth:**`, ephemeral: true }).catch((err) => {
-                                console.log(`i couldn't reply to the message: ` + err.message)
-                  })
-                          db.set(`MutedMember_${member.id}`, 'True')
-                  
-  setTimeout(async () => {
-    await member.roles.remove(muteRole)
-  db.set(`MutedMember_${member.id}`, 'False')  
-      message.reply({ content: `:white_check_mark: **${member.user.username} Is now unmuted!**`, ephemeral: true }).catch((err) => {
-                                console.log(`i couldn't reply to the message: ` + err.message)
-                        })
-  }, ms(time));
-                }
-        },
+            setTimeout(async () => {
+                await member.roles.remove(muteRole);
+                db.set(`MutedMember_${member.id}`, false);
+                message.channel.send(`**${member.user.username} is now unmuted!**`);
+            }, time);
+        } catch (err) {
+            console.log(err);
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription(`**Failed to mute ${member.user.username}: ${err.message}**`);
+            return message.reply({ embeds: [embed] });
+        }
+    },
 };
