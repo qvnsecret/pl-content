@@ -65,7 +65,7 @@ module.exports = {
         // Send confirmation message
         const embed = new MessageEmbed()
             .setColor("#2b2d31")
-            .setDescription(`js\n${messages.size} messages have been deleted.`);
+            .setDescription(`${messages.size} messages have been deleted.`);
         message.channel.send({ embeds: [embed] }).then(replyMessage => {
             setTimeout(() => replyMessage.delete(), 6000);
         }).catch(err => console.log(err.message));
