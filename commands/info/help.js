@@ -1,52 +1,36 @@
-const { MessageButton, MessageActionRow, MessageEmbed } = require("discord.js");
-const { glob } = require("glob");
-const { promisify } = require("util");
+const { MessageEmbed } = require("discord.js");
+const fs = require("fs");
+const path = require("path");
 
 module.exports = {
     name: "help",
-    description: 'Feeling lost?',
-    aliases: [],
+    description: "Displays all commands available.",
     run: async (client, message, args) => {
-        const globPromise = promisify(glob);
-        
-        // Load all command files
-        const commandFiles = await Promise.all([
-            globPromise(`${process.cwd()}/commands/admin/**/*.js`),
-            globPromise(`${process.cwd()}/commands/info/**/*.js`),
-            globPromise(`${process.cwd()}/commands/owner/**/*.js`)
-        ]);
+        const categories = ['info', 'admin', 'owner'];
+        const commandsPath = path.join(__dirname, 'commands'); // Adjust this path to your commands directory structure
 
         let embed = new MessageEmbed()
-            .setTitle("**Mytho**")
-            .setDescription(`**Thank you for choosing our bot, <:mytho:1230996358081544222> \`Mytho\`. Below, you'll find a comprehensive list of all available commands for your convenience.**\nBot Prefix: ${client.config.prefix}help`)
-            .setColor(`#2b2d31`)
-            .setTimestamp();
+            .setTitle("Available Commands")
+            .setDescription("Here are all the commands grouped by category:")
+            .setColor("#0099ff")
+            .setFooter("Mytho 2024");
 
-        // Categories are assumed to be in the order of admin, info, owner from Promise.all result
-        const categories = ['Admin', 'Info', 'Owner'];
-        commandFiles.forEach((files, index) => {
-            let commandsList = files.map(file => {
-                const command = require(file);
-                return `**${client.config.prefix}${command.name}** - ${command.description}`;
-            }).join('\n');
+        categories.forEach(category => {
+            const commandFiles = fs.readdirSync(path.join(commandsPath, category))
+                .filter(file => file.endsWith('.js'));
 
-            if (commandsList) {
-                embed.addField(categories[index] + ' Commands', commandsList);
+            if (commandFiles.length === 0) return;
+
+            const commands = commandFiles.map(file => {
+                const command = require(path.join(commandsPath, category, file));
+                return `\`${command.name}\` - ${command.description}`;
+            }).join("\n");
+
+            if (commands.length > 0) {
+                embed.addField(`${category.charAt(0).toUpperCase() + category.slice(1)} Commands`, commands);
             }
         });
 
-        let button = new MessageActionRow()
-            .addComponents(
-                new MessageButton()
-                    .setStyle('LINK')
-                    .setLabel('Bug Server')
-                    .setURL(`https://discord.gg/n2DR6VJtgP`),
-                new MessageButton()
-                    .setStyle('LINK')
-                    .setLabel('Server Support')
-                    .setURL(`https://discord.com/invite/886Z9JUdXY`)
-            );
-
-        message.reply({ embeds: [embed], components: [button] });
+        message.channel.send({ embeds: [embed] });
     },
 };
