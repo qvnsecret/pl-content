@@ -1,37 +1,59 @@
-const { Message, Client } = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
-        name: "move",
-        description: `Moves a member to another voice channel.`,
-        run: async (client, message, args) => {
-                const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
+    name: "move",
+    description: "Moves a member to another voice channel.",
+    run: async (client, message, args) => {
+        const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
+        const permission = message.member.permissions.has("MOVE_MEMBERS");
+        const botPermission = message.guild.me.permissions.has("MOVE_MEMBERS");
 
-                const permission = message.member.permissions.has("MOVE_MEMBERS");
-                const guilds = message.guild.me.permissions.has("MOVE_MEMBERS");
-                if (!permission) return message.reply({ content: ":x: **You don't have permission to use this command**" }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (!permission) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("**You don't have permission to use this command**");
+            return message.reply({ embeds: [embed] }).catch(err => console.log(err.message));
+        }
 
-                if (!args[0]) return message.reply({ content: `:rolling_eyes: **Please mention member or id**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (!args[0] || !member) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("**Please mention a member or provide their ID**");
+            return message.reply({ embeds: [embed] }).catch(err => console.log(err.message));
+        }
 
-                if (!member) return message.reply({ content: `:rolling_eyes: **I can't find this member**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (!botPermission) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("**I don't have the permissions to move members. Please check my permissions and role position.**");
+            return message.reply({ embeds: [embed] }).catch(err => console.log(err.message));
+        }
 
-                if (message.member.roles.highest.position < member.roles.highest.position) return message.reply({ content: `:rolling_eyes: **${member.user.username} have higher role than you**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (message.member.roles.highest.position < member.roles.highest.position) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription(`**${member.user.username} has a higher role than you.**`);
+            return message.reply({ embeds: [embed] }).catch(err => console.log(err.message));
+        }
 
-                if (!guilds) return message.reply({ content: `:rolling_eyes: **Please check my permissions and role position.**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
-                if (!message.member.voice.channel) return message.reply({ content: `:x: **You aren't in a voice channel**` })
-                let vchannel = message.member.voice.channel
-                member.voice.setChannel(vchannel).then(() => {
-                        message.reply({ content: `:white_check_mark: **Moved ${member.user.username} To ${message.member.voice.channel.name}**` })
-                })
+        if (!message.member.voice.channel) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("**You aren't in a voice channel.**");
+            return message.reply({ embeds: [embed] });
+        }
 
-        },
+        let targetVoiceChannel = message.member.voice.channel;
+        member.voice.setChannel(targetVoiceChannel).then(() => {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription(`**Moved ${member.user.username} to ${targetVoiceChannel.name}.**`);
+            message.reply({ embeds: [embed] });
+        }).catch(err => {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription(`**Failed to move ${member.user.username}: ${err.message}**`);
+            message.reply({ embeds: [embed] }).catch(error => console.log(error.message));
+        });
+    },
 };
