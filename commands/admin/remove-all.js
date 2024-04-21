@@ -1,7 +1,7 @@
 const { Message, Client, MessageEmbed } = require("discord.js");
 
 module.exports = {
-        name: "remove-all",
+        name: "clearrole-all",
         description: `remove a roles for a user.`,
         run: async (client, message, args) => {
 
