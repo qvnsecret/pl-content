@@ -1,53 +1,60 @@
-const { Message, Client } = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
-        name: "kick",
-        description: `kicks a memeber.`,
-        run: async (client, message, args) => {
+    name: "kick",
+    description: "Kicks a member.",
+    run: async (client, message, args) => {
+        const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
+        const permission = message.member.permissions.has("KICK_MEMBERS");
+        const botPermission = message.guild.me.permissions.has("KICK_MEMBERS");
 
-                const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-                const permission = message.member.permissions.has("KICK_MEMBERS");
-                const guilds = message.guild.me.permissions.has("KICK_MEMBERS");
+        if (!permission) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("**You don't have permission to use this command**");
+            return message.reply({ embeds: [embed], ephemeral: true }).catch(err => console.log(err.message));
+        }
 
-                if (!permission)
-      return message.reply({ content: ":x: **You don't have permission to use this command**", ephemeral: true }).catch((err) => {
-                                console.log(`i couldn't reply to the message: ` + err.message)
-    
-      })
-                if (!args[0]) return message.reply({ content: `:rolling_eyes: **Please mention member or id**`, ephemeral: true }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
-                if (!member) return message.reply({ content: `:rolling_eyes: **I can't find this member**`, ephemeral: true }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (!args[0] || !member) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("**Please mention a member or provide their ID**");
+            return message.reply({ embeds: [embed], ephemeral: true }).catch(err => console.log(err.message));
+        }
 
-                if (member.id === message.member.id)
-                        return message.reply({ content: `:rolling_eyes: **You can't kick ${member.user.username}**`, ephemeral: true }).catch((err) => {
-                                console.log(`i couldn't reply to the message: ` + err.message)
-                        })
+        if (member.id === message.author.id) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("**You can't kick yourself**");
+            return message.reply({ embeds: [embed], ephemeral: true }).catch(err => console.log(err.message));
+        }
 
-                if (message.member.roles.highest.position < member.roles.highest.position)
-                        return message.reply({
-                                content:
-                                        `:rolling_eyes: **You can't kick ${member.user.username} have higher role than you**`
-                                , ephemeral: true
-                        }).catch((err) => {
-                                console.log(`i couldn't reply to the message: ` + err.message)
-                        })
+        if (!botPermission || !member.kickable) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription(`**I can't kick ${member.user.username}. Please check my permissions and role position, or they may have a higher role.**`);
+            return message.reply({ embeds: [embed], ephemeral: true }).catch(err => console.log(err.message));
+        }
 
-                if (!guilds) return message.reply({ content: `:rolling_eyes: **I couldn't kick that user. Please check my permissions and role position.**`, ephemeral: true }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (message.member.roles.highest.position <= member.roles.highest.position) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription(`**You can't kick ${member.user.username} because they have a higher or equal role than you.**`);
+            return message.reply({ embeds: [embed], ephemeral: true }).catch(err => console.log(err.message));
+        }
 
-            if (!member.bannable) return message.reply(`:rolling_eyes: **You can't kick ${member.user.username}**`).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
-          
-                return (
-                        (await member.kick()) +
-                        message.reply({ content: `:white_check_mark: **${member.user.username} kicked from the server!**`, ephemeral: true }).catch((err) => {
-                                console.log(`i couldn't reply to the message: ` + err.message)
-                        })
-                )
-        },
+        try {
+            await member.kick();
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription(`**${member.user.username} has been kicked from the server!**`);
+            message.reply({ embeds: [embed], ephemeral: true });
+        } catch (err) {
+            console.log(`Failed to kick ${member.user.username}:`, err);
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription(`**Failed to kick ${member.user.username}: ${err.message}**`);
+            message.reply({ embeds: [embed], ephemeral: true }).catch(error => console.log(error.message));
+        }
+    },
 };
