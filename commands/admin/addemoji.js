@@ -1,50 +1,43 @@
-const { MessageEmbed, Util } = require("discord.js");
+const { MessageEmbed, MessageAttachment } = require("discord.js");
 
 module.exports = {
     name: "addemoji",
-    description: "Add emojis to the server (can add multiple emojis at the same time).",
+    description: "Add an emoji to the server using an image attachment.",
     run: async (client, message, args) => {
-        const permission = message.member.permissions.has("MANAGE_EMOJIS_AND_STICKERS");
-        if (!permission) {
+        // Check if the user has permission to manage emojis
+        if (!message.member.permissions.has("MANAGE_EMOJIS_AND_STICKERS")) {
             const embed = new MessageEmbed()
                 .setColor("#2b2d31")
-                .setDescription("**You don't have permission >:(**");
+                .setDescription("**You don't have permission to manage emojis.**");
             return message.reply({ embeds: [embed] });
         }
 
-        let emojis = args.join(' ').match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/gi);
-        if (!emojis) {
-            const embed = new MessageEmbed()
-                .setColor("#2b2d31")
-                .setDescription("**Please provide emojis to add.**");
-            return message.reply({ embeds: [embed] });
-        }
+        // Check if there is an image attached
+        if (message.attachments.size > 0) {
+            message.attachments.forEach(attachment => {
+                // Assuming the attachment is an image
+                const image = attachment.url;
+                const emojiName = args.length ? args[0] : 'CustomEmoji';
 
-        let emojisA = [];
-        emojis.forEach((emote) => {
-            let emoji = Util.parseEmoji(emote);
-            if (emoji.id) {
-                const Link = `https://cdn.discordapp.com/emojis/${emoji.id}.${emoji.animated ? "gif" : "png"}`;
-                message.guild.emojis.create(`${Link}`, `${emoji.name}`).then((em) => {
-                    emojisA.push(em.toString())
-                    if (emojis.length == emojisA.length) {
+                message.guild.emojis.create(image, emojiName)
+                    .then(emoji => {
                         const embed = new MessageEmbed()
                             .setColor("#2b2d31")
-                            .setDescription(`${emojisA.map(e => e).join(',')} **Done added emoji**`);
-                        message.reply({ embeds: [embed] }).catch((err) => {
-                            console.log(`I couldn't reply to the message: ` + err.message);
-                        });
-                        emojisA = [];
-                    }
-                }).catch((error) => {
-                    const embed = new MessageEmbed()
-                        .setColor("#2b2d31")
-                        .setDescription("Error: " + error.message);
-                    message.reply({ embeds: [embed] }).catch((err) => {
-                        console.log(`I couldn't reply to the message: ` + err.message);
+                            .setDescription(`**Emoji added successfully!** ${emoji.toString()}`);
+                        message.reply({ embeds: [embed] });
+                    })
+                    .catch(error => {
+                        const embed = new MessageEmbed()
+                            .setColor("#2b2d31")
+                            .setDescription(`**Failed to add emoji:** ${error.message}`);
+                        message.reply({ embeds: [embed] });
                     });
-                });
-            }
-        });
+            });
+        } else {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("**Please attach an image to add as an emoji.**");
+            return message.reply({ embeds: [embed] });
+        }
     },
 };
