@@ -1,35 +1,17 @@
 const { MessageEmbed } = require("discord.js");
-const fs = require("fs");
-const path = require("path");
 
 module.exports = {
     name: "help",
-    description: "Displays all commands available.",
+    description: "Displays general information about the bot.",
     run: async (client, message, args) => {
-        const categories = ['info', 'admin', 'owner'];
-        const commandsPath = path.join(__dirname, 'commands'); // Adjust this path to your commands directory structure
-
-        let embed = new MessageEmbed()
-            .setTitle("Available Commands")
-            .setDescription("Here are all the commands grouped by category:")
+        const embed = new MessageEmbed()
+            .setTitle("Bot Information")
+            .setDescription("Learn more about what this bot can do and how to use it!")
             .setColor("#0099ff")
-            .setFooter("Mytho 2024");
-
-        categories.forEach(category => {
-            const commandFiles = fs.readdirSync(path.join(commandsPath, category))
-                .filter(file => file.endsWith('.js'));
-
-            if (commandFiles.length === 0) return;
-
-            const commands = commandFiles.map(file => {
-                const command = require(path.join(commandsPath, category, file));
-                return `\`${command.name}\` - ${command.description}`;
-            }).join("\n");
-
-            if (commands.length > 0) {
-                embed.addField(`${category.charAt(0).toUpperCase() + category.slice(1)} Commands`, commands);
-            }
-        });
+            .addField("Commands", "Use `.commandName` to interact with me!")
+            .addField("Support", "Need help? Contact our support team!")
+            .setFooter("Thank you for using our bot!")
+            .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
     },
