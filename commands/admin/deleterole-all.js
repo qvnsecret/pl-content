@@ -1,7 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 
 module.exports = {
-    name: "clearrole-all",
+    name: "deleterole-all",
     description: "Remove a specified role from all users who have it.",
     run: async (client, message, args) => {
         const permission = message.member.permissions.has("MANAGE_ROLES");
