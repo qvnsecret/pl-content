@@ -29,15 +29,18 @@ client.config = require("./config.json");
 require("./handler")(client);
 
 client.on('messageCreate', message => {
-    if (message.mentions.has(client.user.id) && !message.author.bot) {
+    // Check if the bot is specifically mentioned and ignore messages from bots (including itself)
+    if (message.mentions.users.has(client.user.id) && !message.mentions.everyone && !message.author.bot) {
         const embed = new MessageEmbed()
-            .setColor("#2b2d31")
+            .setColor("#2b2d31")  // Dark gray color
             .setDescription("My prefix is `.`\nIf you want more info, type `.help` to see all the commands available.")
             .setTimestamp();
 
+        // Send the embed in response to the mention
         message.reply({ embeds: [embed] });
     }
 });
+
 
 const channelId = '1230623201101484134'; // Replace 'YOUR_CHANNEL_ID' with the ID of your desired channel
 
