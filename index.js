@@ -33,7 +33,6 @@ client.on('messageCreate', message => {
         const embed = new MessageEmbed()
             .setColor("#2b2d31")  // Dark gray color
             .setDescription("My prefix is `.`\nIf you want more info, type `.help` to see all the commands available.")
-            .setThumbnail(client.user.displayAvatarURL())  // Optional: Displays bot's avatar
             .setTimestamp();
 
         message.reply({ embeds: [embed] });
