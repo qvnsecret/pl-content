@@ -50,7 +50,7 @@ client.once('ready', () => {
         // Update the embed every 5 seconds
         setInterval(() => {
             sentMessage.edit({ embeds: [createEmbed()] }).catch(console.error);
-        }, 5000);
+        }, 1000);
     }).catch(console.error);
 });
 
