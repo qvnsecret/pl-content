@@ -33,7 +33,6 @@ client.on('messageCreate', message => {
         const embed = new MessageEmbed()
             .setColor("#2b2d31")
             .setDescription("My prefix is `.`\nIf you want more info, type `.help` to see all the commands available.")
-            .setThumbnail("https://cdn.discordapp.com/attachments/1223345746862931991/1231928715789991946/discordstatus_5.png?ex=6638be05&is=66264905&hm=6daa6d6088c95cee75a927146082b9269a2fcbe435151066a194740e0ef32a04&")
             .setTimestamp();
 
         message.reply({ embeds: [embed] });
@@ -70,6 +69,7 @@ function createEmbed() {
         .addField("Uptime", uptime, true)
         .addField("Ping", `${botPing} ms`, true)
         .addField("Memory Usage", `${usedMemory} MB`, true)
+        .setImage("https://cdn.discordapp.com/attachments/1223345746862931991/1231928715789991946/discordstatus_5.png?ex=6638be05&is=66264905&hm=6daa6d6088c95cee75a927146082b9269a2fcbe435151066a194740e0ef32a04&")
         .setTimestamp();
 }
 
