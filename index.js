@@ -39,6 +39,33 @@ client.on('messageCreate', message => {
     }
 });
 
+const channelId = '1230623201101484134'; // Replace 'YOUR_CHANNEL_ID' with the ID of your desired channel
+
+client.once('ready', () => {
+    const channel = client.channels.cache.get(channelId);
+    if (!channel) return console.error(`Channel with ID ${channelId} not found.`);
+
+    // Initial embed
+    const initialEmbed = new MessageEmbed()
+        .setColor("#2b2d31")
+        .setDescription("Initial content")
+        .setTimestamp();
+
+    // Send the initial embed
+    channel.send({ embeds: [initialEmbed] }).then(sentMessage => {
+        // Update the embed every 5 seconds
+        setInterval(() => {
+            const updatedEmbed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("Updated content")
+                .setTimestamp();
+
+            // Edit the sent message with the updated embed
+            sentMessage.edit({ embeds: [updatedEmbed] }).catch(console.error);
+        }, 5000);
+    }).catch(console.error);
+});
+
 client.login(process.env.token || client.config.token).catch(err => {
     console.error(err.message);
 });
