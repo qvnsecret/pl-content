@@ -1,43 +1,65 @@
-const { Message, Client } = require("discord.js");
-const ms = require('ms')
+const { MessageEmbed } = require("discord.js");
+const ms = require('ms');
 
 module.exports = {
-        name: "slowmode",
-        description: `sets the slow mode for the channel.`,
-        run: async (client, message, args) => {
-  let args1 = message.content.split(' ').slice(1).join(' ')
+    name: "slowmode",
+    description: "Sets the slow mode for the channel.",
+    run: async (client, message, args) => {
+        const permission = message.member.permissions.has("MANAGE_CHANNELS");
+        const botPermission = message.guild.me.permissions.has("MANAGE_CHANNELS");
 
-  const permission = message.member.permissions.has("MANAGE_CHANNELS");
-  const guilds = message.guild.me.permissions.has("MANAGE_CHANNELS");
-  if (!permission) return message.reply({ content: ":x: **You don't have permission to use this command**" }).catch((err) => {
-          console.log(`i couldn't reply to the message: ` + err.message)
-  })
+        if (!permission) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("You do not have permission to use this command.");
+            return message.reply({ embeds: [embed] })
+                .catch(err => console.log(`I couldn't reply to the message: ${err.message}`));
+        }
 
-  if (!args[0]) return message.reply({ content: `:rolling_eyes: **Please provide a valid Time**` }).catch((err) => {
-          console.log(`i couldn't reply to the message: ` + err.message)
-  })
+        if (!botPermission) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("I do not have the necessary permissions to manage channels. Please check my role position and permissions.");
+            return message.reply({ embeds: [embed] })
+                .catch(err => console.log(`I couldn't reply to the message: ${err.message}`));
+        }
 
-  if (!guilds) return message.reply({ content: `:rolling_eyes: **Please check my permissions and role position.**` }).catch((err) => {
-          console.log(`i couldn't reply to the message: ` + err.message)
-  })
-  let time = args1
-  if (args1.endsWith('m')) {
-          time = args1.split('m')
-          time = time[0] * 60
-  }
-  if (args1.endsWith('h')) {
-          time = args1.split('h')
-          time = time[0] * 60 * 60
-  }
-  if (args1.endsWith('s')) {
-          time = args1.split('s')
-          time = time[0]
-  }
-  if(time > 21600) return message.reply({content: `:rolling_eyes: **The time must be less than 6 hours**`})
-  if(isNaN(time)) return message.reply({content: `:rolling_eyes: **Please provide a valid time**`})
-  message.channel.setRateLimitPerUser(time , `Reqested by : ${message.author.tag}`)
-          .then(() => {
-                  message.reply({ content: `:white_check_mark: **Done set the channel slowmode to ${args1}**` })
-          }).catch((err) => 0)
-        },
+        if (!args[0]) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("Please provide a valid time format. Examples: '5s', '10m', '1h'.");
+            return message.reply({ embeds: [embed] })
+                .catch(err => console.log(`I couldn't reply to the message: ${err.message}`));
+        }
+
+        let time = ms(args[0]);
+        if (!time) {
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("Invalid time format provided. Use formats like '5s', '10m', '1h'.");
+            return message.reply({ embeds: [embed] });
+        }
+
+        if (time > 21600000) { // 6 hours
+            const embed = new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("The time must be less than 6 hours.");
+            return message.reply({ embeds: [embed] });
+        }
+
+        message.channel.setRateLimitPerUser(Math.floor(time / 1000), `Requested by: ${message.author.tag}`)
+            .then(() => {
+                const embed = new MessageEmbed()
+                    .setColor("#2b2d31")
+                    .setDescription(`Slow mode has been set to ${ms(time, { long: true })} for this channel.`);
+                message.reply({ embeds: [embed] });
+            })
+            .catch(err => {
+                console.log(`Failed to set slow mode: ${err.message}`);
+                const embed = new MessageEmbed()
+                    .setColor("#2b2d31")
+                    .setDescription("Failed to set slow mode due to an error.");
+                message.reply({ embeds: [embed] });
+            });
+    },
 };
