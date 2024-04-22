@@ -3,7 +3,7 @@ const { CommandInteraction, MessageEmbed, MessageActionRow, MessageButton } = re
 module.exports = {
     name: "invite",
     description: "Invite & Support our bot. You will help us a lot.",
-    // Type is not needed as 'CHAT_INPUT' is the default type for slash commands
+    type: "CHAT_INPUT" // Type is not needed as 'CHAT_INPUT' is the default type for slash commands
 
     /**
      * This function runs when the slash command is executed.
