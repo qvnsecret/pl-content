@@ -1,60 +1,43 @@
-const express = require('express');
-const app = express();
-const chalk = require("chalk");
-const os = require('os');
-
-app.get('/', (req, res) => {
-    res.send('Hello Express app!')
-});
-
-app.use('/ping', (req, res) => {
-    res.send(new Date());
-});
-
-app.listen(3000, () => {
-    console.log(chalk.greenBright.bold('The server is now running and listening on port 3000.'));
-});
-
 const { Client, Collection, MessageEmbed } = require("discord.js");
 const client = new Client({
     intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"],
     allowedMentions: { parse: ['users', 'roles'], repliedUser: false },
 });
 
-module.exports = client;
+// Setup configuration and handlers
 client.commands = new Collection();
 client.slashCommands = new Collection();
 client.config = require("./config.json");
-
 require("./handler")(client);
 
-client.on('messageCreate', message => {
-    // Check if the bot is specifically mentioned and ignore messages from bots (including itself)
-    if (message.mentions.users.has(client.user.id) && !message.mentions.everyone && !message.author.bot) {
-        const embed = new MessageEmbed()
-            .setColor("#2b2d31")  // Dark gray color
-            .setDescription("My prefix is `.`\nIf you want more info, type `.help` to see all the commands available.")
-            .setTimestamp();
+client.on('messageCreate', async message => {
+    // Ignore messages from bots to avoid loops
+    if (message.author.bot) return;
 
-        // Send the embed in response to the mention
-        message.reply({ embeds: [embed] });
+    // Check if the message is in the specified channel
+    if (message.channel.id === '1230623201101484134') { // Use your specific channel ID here
+        try {
+            // Delete the message
+            await message.delete();
+
+            // Post or update the status embed
+            const embedMessage = await message.channel.messages.fetch({ limit: 1 });
+            if (embedMessage.size === 0) {
+                // If no previous message, send a new embed
+                message.channel.send({ embeds: [createEmbed()] });
+            } else {
+                // If there is a previous message, edit it
+                const lastMessage = embedMessage.first();
+                if (lastMessage.author.id === client.user.id) {
+                    lastMessage.edit({ embeds: [createEmbed()] });
+                } else {
+                    message.channel.send({ embeds: [createEmbed()] });
+                }
+            }
+        } catch (err) {
+            console.error('Failed to delete the message or send/update the embed:', err);
+        }
     }
-});
-
-
-const channelId = '1230623201101484134'; // Replace 'YOUR_CHANNEL_ID' with the ID of your desired channel
-
-client.once('ready', () => {
-    const channel = client.channels.cache.get(channelId);
-    if (!channel) return console.error(`Channel with ID ${channelId} not found.`);
-
-    // Send initial embed
-    channel.send({ embeds: [createEmbed()] }).then(sentMessage => {
-        // Update the embed every 5 seconds
-        setInterval(() => {
-            sentMessage.edit({ embeds: [createEmbed()] }).catch(console.error);
-        }, 1000);
-    }).catch(console.error);
 });
 
 function createEmbed() {
@@ -72,7 +55,6 @@ function createEmbed() {
         .addField("Uptime", uptime, true)
         .addField("Ping", `${botPing} ms`, true)
         .addField("Memory Usage", `${usedMemory} MB`, true)
-        .setImage("https://cdn.discordapp.com/attachments/1223345746862931991/1231928715789991946/discordstatus_5.png?ex=6638be05&is=66264905&hm=6daa6d6088c95cee75a927146082b9269a2fcbe435151066a194740e0ef32a04&")
         .setTimestamp();
 }
 
@@ -86,5 +68,5 @@ function formatUptime(uptime) {
 }
 
 client.login(process.env.token || client.config.token).catch(err => {
-    console.error(err.message);
+    console.error('Failed to login:', err.message);
 });
