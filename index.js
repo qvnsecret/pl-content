@@ -1,37 +1,60 @@
-const { Client, Intents, MessageEmbed, Collection } = require("discord.js");
-const client = new Client({
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS]
+const express = require('express');
+const app = express();
+const chalk = require("chalk");
+const os = require('os');
+
+app.get('/', (req, res) => {
+    res.send('Hello Express app!')
 });
 
+app.use('/ping', (req, res) => {
+    res.send(new Date());
+});
+
+app.listen(3000, () => {
+    console.log(chalk.greenBright.bold('The server is now running and listening on port 3000.'));
+});
+
+const { Client, Collection, MessageEmbed } = require("discord.js");
+const client = new Client({
+    intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"],
+    allowedMentions: { parse: ['users', 'roles'], repliedUser: false },
+});
+
+module.exports = client;
 client.commands = new Collection();
 client.slashCommands = new Collection();
-client.config = require("./config.json"); // Ensure config.json exists and is configured properly
-require("./handler")(client); // Ensure this handler is properly set up for loading commands
+client.config = require("./config.json");
 
-client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-    const channel = client.channels.cache.get('1230623201101484134'); // Use your specific channel ID
-    if (!channel) {
-        console.log(`Channel with ID 1230623201101484134 not found.`);
-        return;
-    }
-
-    // Initial embed send or update
-    channel.messages.fetch({ limit: 1 }).then(messages => {
-        const lastMessage = messages.first();
-        if (lastMessage && lastMessage.author.id === client.user.id) {
-            lastMessage.edit({ embeds: [createEmbed()] });
-        } else {
-            channel.send({ embeds: [createEmbed()] });
-        }
-    }).catch(console.error);
-});
+require("./handler")(client);
 
 client.on('messageCreate', message => {
-    // Ignore messages from bots or if the message is not in the specified channel
-    if (message.author.bot || message.channel.id !== '1230623201101484134') return;
+    // Check if the bot is specifically mentioned and ignore messages from bots (including itself)
+    if (message.mentions.users.has(client.user.id) && !message.mentions.everyone && !message.author.bot) {
+        const embed = new MessageEmbed()
+            .setColor("#2b2d31")  // Dark gray color
+            .setDescription("My prefix is `.`\nIf you want more info, type `.help` to see all the commands available.")
+            .setTimestamp();
 
-    message.delete().catch(console.error); // Delete incoming messages safely with error handling
+        // Send the embed in response to the mention
+        message.reply({ embeds: [embed] });
+    }
+});
+
+
+const channelId = '1230623201101484134'; // Replace 'YOUR_CHANNEL_ID' with the ID of your desired channel
+
+client.once('ready', () => {
+    const channel = client.channels.cache.get(channelId);
+    if (!channel) return console.error(`Channel with ID ${channelId} not found.`);
+
+    // Send initial embed
+    channel.send({ embeds: [createEmbed()] }).then(sentMessage => {
+        // Update the embed every 5 seconds
+        setInterval(() => {
+            sentMessage.edit({ embeds: [createEmbed()] }).catch(console.error);
+        }, 1000);
+    }).catch(console.error);
 });
 
 function createEmbed() {
@@ -49,6 +72,7 @@ function createEmbed() {
         .addField("Uptime", uptime, true)
         .addField("Ping", `${botPing} ms`, true)
         .addField("Memory Usage", `${usedMemory} MB`, true)
+        .setImage("https://cdn.discordapp.com/attachments/1223564129286230038/1232405905224630322/operational_2.gif?ex=662956f0&is=66280570&hm=08bd5615f78f2f44487443c8291c1c68f2d16edd0ab7fe6cfb36a6a9965ede61&")
         .setTimestamp();
 }
 
@@ -61,4 +85,6 @@ function formatUptime(uptime) {
     return `${hours}h ${minutes}m ${seconds}s`;
 }
 
-client.login(client.config.token).catch(console.error); // Ensure your token is correctly placed in config.json
+client.login(process.env.token || client.config.token).catch(err => {
+    console.error(err.message);
+});
