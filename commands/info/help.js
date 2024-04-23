@@ -18,7 +18,7 @@ module.exports = {
                     .setLabel('Privacy')
                     .setStyle('SECONDARY'),
                 new MessageButton()
-                    .setCustomId('tou')
+                    .setCustomId('tos')
                     .setLabel('Terms of Use')
                     .setStyle('SECONDARY'),
                 new MessageButton()
@@ -27,10 +27,10 @@ module.exports = {
                     .setStyle('PRIMARY')
             );
 
-        message.channel.send({ embeds: [embed], components: [buttons] });
+        const sentMessage = await message.channel.send({ embeds: [embed], components: [buttons] });
 
         const filter = i => i.user.id === message.author.id;
-        const collector = message.channel.createMessageComponentCollector({ filter, time: 15000 });
+        const collector = sentMessage.createMessageComponentCollector({ filter, time: 60000 });
 
         collector.on('collect', async i => {
             if (i.customId === 'privacy') {
@@ -39,14 +39,14 @@ module.exports = {
                     .setDescription("Here's the detailed [Privacy Policy](https://qvnsecret.github.io/mytho/)")
                     .setColor("#2b2d31");
                 await i.reply({ embeds: [privacyEmbed], ephemeral: true });
-            } else if (i.customId === 'tou') {
+            } else if (i.customId === 'tos') {
                 const tosEmbed = new MessageEmbed()
                     .setTitle("Terms of Use")
                     .setDescription("Here's the detailed [Terms of Use](https://qvnsecret.github.io/mytho/)")
                     .setColor("#2b2d31");
                 await i.reply({ embeds: [tosEmbed], ephemeral: true });
             } else if (i.customId === 'all_commands') {
-                const categories = { 'Info': [], 'Admin': [], 'Owner': [] }; // Predefined categories
+                const categories = { 'Info': [], 'Admin': [], 'Owner': [] };
                 client.commands.forEach(command => {
                     if (command.category && categories.hasOwnProperty(command.category)) {
                         categories[command.category].push(`\`${command.name}\` - ${command.description}`);
@@ -60,6 +60,7 @@ module.exports = {
                             .setTitle(`${category} Commands`)
                             .setDescription(categories[category].join('\n'))
                             .setColor("#2b2d31");
+
                         embeds.push(commandsEmbed);
                     }
                 }
