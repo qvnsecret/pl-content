@@ -19,7 +19,7 @@ module.exports = {
         const memoryUsage = `${usedMemory} MB / ${totalMemory} MB`;
 
         const embed = new MessageEmbed()
-            .setTitle('Aesthetical Stats')
+            .setTitle('Mytho Stats')
             .setDescription(`Guilds: \`${guilds.size}\` - Members: \`${totalMembers}\` - Uptime: \`${uptime}\` - Memory: \`${memoryUsage}\``)
             .setColor(`#2b2d31`)
             .setTimestamp();
