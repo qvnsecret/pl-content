@@ -1,46 +1,85 @@
-const { Message, Client, MessageEmbed } = require("discord.js");
-const db = require('quick.db')
+const { MessageEmbed } = require("discord.js");
+const db = require('quick.db');
 
 module.exports = {
-        name: "warn",
-        description: `gives warn to a user.`,
-        run: async (client, message, args) => {
-                const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
+    name: "warn",
+    description: "Gives a warning to a user.",
+    run: async (client, message, args) => {
+        const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
+        const reason_msg = args.slice(1).join(' ');
 
-                const permission = message.member.permissions.has("MANAGE_MESSAGES");
-          const reason_msg = args.slice(1).join(' ');
-                if (!permission) return message.reply({ content: ":x: **You don't have permission to use this command**" }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (!message.member.permissions.has("MANAGE_MESSAGES")) {
+            return message.reply({
+                embeds: [{
+                    description: "You don't have permission to use this command",
+                    color: "#2b2d31"
+                }],
+                ephemeral: true
+            }).catch(console.error);
+        }
 
-                if (!args[0]) return message.reply({ content: `:rolling_eyes: **Please mention member or id**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (!args[0] || !member) {
+            return message.reply({
+                embeds: [{
+                    description: "Please mention a member or provide their ID.",
+                    color: "#2b2d31"
+                }],
+                ephemeral: true
+            }).catch(console.error);
+        }
 
-                if (!member) return message.reply({ content: `:rolling_eyes: **I can't find this member**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (member.id === message.author.id) {
+            return message.reply({
+                embeds: [{
+                    description: "You can't warn yourself.",
+                    color: "#2b2d31"
+                }],
+                ephemeral: true
+            }).catch(console.error);
+        }
 
-                if (member.id === message.author.id) return message.reply({ content: `:rolling_eyes: **You can't warn ${member.user.username}**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (message.member.roles.highest.position <= member.roles.highest.position) {
+            return message.reply({
+                embeds: [{
+                    description: "You can't warn someone with an equal or higher role.",
+                    color: "#2b2d31"
+                }],
+                ephemeral: true
+            }).catch(console.error);
+        }
 
-                if (message.member.roles.highest.position < member.roles.highest.position) return message.reply({ content: `:rolling_eyes: **You can't warn ${member.user.username}**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
-          if(!reason_msg) return message.reply({content: `:rolling_eyes: **Please type a reason.**`})
-          db.add(`warns_${member.id}`,1)
-          let Warn = db.get(`warns_${member.id}`)
-          console.log(Warn)
-            message.reply({content: `:white_check_mark: **${member.user.username} warned!**`})
-let embed = new MessageEmbed()
-            .setTitle(':warning: You were warned!')
-            .setDescription(reason_msg)
+        if (!reason_msg) {
+            return message.reply({
+                embeds: [{
+                    description: "Please provide a reason for the warning.",
+                    color: "#2b2d31"
+                }],
+                ephemeral: true
+            }).catch(console.error);
+        }
+
+        // Increment warnings count
+        db.add(`warns_${member.id}`, 1);
+        let Warn = db.get(`warns_${member.id}`);
+        console.log(Warn); // Consider removing this or changing to a more detailed log if necessary
+
+        const embed = new MessageEmbed()
+            .setTitle('You were warned!')
+            .setDescription(`**Reason:** ${reason_msg}`)
+            .setColor('#2b2d31')
             .setTimestamp()
-	.setFooter({ text: `${message.guild.name}`, iconURL: `${message.guild.iconURL()}` });
+            .setFooter(`${message.guild.name}`, message.guild.iconURL());
 
-            member.send({embeds: [embed]}).catch((err) => {
-     console.log(`i couldn't reply to the message: ` + err.message) 
-            })
-        },
+        message.reply({
+            content: `**${member.user.username} has been warned! Total warnings: ${Warn}**`,
+            embeds: [embed],
+            ephemeral: true
+        });
+        
+        // Send a DM to the member with the warning information
+        member.send({ embeds: [embed] }).catch(err => {
+            console.error(`Could not send DM to ${member.user.tag}: ${err.message}`);
+            message.channel.send(`Failed to send a DM to ${member.user.username}.`).catch(console.error);
+        });
+    },
 };
