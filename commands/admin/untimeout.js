@@ -1,42 +1,55 @@
-const { Message, Client } = require("discord.js");
-const ms = require('ms')
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
-        name: "untimeout",
-        description: `removes timeout a member.`,
-        run: async (client, message, args) => {
-                const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
+    name: "untimeout",
+    description: "Removes timeout from a member.",
+    run: async (client, message, args) => {
+        const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
 
-                const permission = message.member.permissions.has("MODERATE_MEMBERS");
-                const guilds = message.guild.me.permissions.has("MODERATE_MEMBERS");
-                if (!permission) return message.reply({ content: ":x: **You don't have permission to use this command**" }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        const permission = message.member.permissions.has("MODERATE_MEMBERS");
+        const botPermission = message.guild.me.permissions.has("MODERATE_MEMBERS");
 
-                if (!args[0]) return message.reply({ content: `:rolling_eyes: **Please mention member or id**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (!permission) {
+            return message.reply({
+                embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("You don't have permission to untimeout members.")]
+            }).catch(console.error);
+        }
 
-                if (!member) return message.reply({ content: `:rolling_eyes: **I can't find this member**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (!botPermission) {
+            return message.reply({
+                embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("I don't have permission to untimeout members. Please check my role position.")]
+            }).catch(console.error);
+        }
 
-                if (member.id === message.author.id) return message.reply({ content: `:rolling_eyes: **You can't use this on your self**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (!args[0] || !member) {
+            return message.reply({
+                embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("Please mention a valid member or provide their ID.")]
+            }).catch(console.error);
+        }
 
-                if (message.member.roles.highest.position < member.roles.highest.position) return message.reply({ content: `:rolling_eyes: **You can't timeout ${member.user.username} have higher role than you**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
+        if (member.id === message.author.id) {
+            return message.reply({
+                embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("You cannot untimeout yourself.")]
+            }).catch(console.error);
+        }
 
-                if (!guilds) return message.reply({ content: `:rolling_eyes: **I couldn't timeout that user. Please check my permissions and role position.**` }).catch((err) => {
-                        console.log(`i couldn't reply to the message: ` + err.message)
-                })
-          member.timeout(ms('1s'),`done by: ${message.member.nickname} , ${message.author.id}`)
-          .then(() => {
-            message.reply({content: `:white_check_mark: **Done untimeout ${member.user.username}**`})
-          }).catch((err) => {
-                        console.log(err.message)
-                })
-        },
+        if (message.member.roles.highest.position <= member.roles.highest.position) {
+            return message.reply({
+                embeds: [new MessageEmbed().setColor("#2b2d31").setDescription(`You cannot untimeout ${member.user.username} as they have a higher role than you.`)]
+            }).catch(console.error);
+        }
+
+        // Properly untimeout a member by setting their timeout to null
+        member.timeout(null, `Untimed out by: ${message.author.tag}`)
+            .then(() => {
+                message.reply({
+                    embeds: [new MessageEmbed().setColor("#2b2d31").setDescription(`${member.user.username} has been untimed out successfully.`)]
+                });
+            }).catch(err => {
+                console.error(err);
+                message.reply({
+                    embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("Failed to untimeout the member, please check the logs for more details.")]
+                }).catch(console.error);
+            });
+    },
 };
