@@ -18,7 +18,7 @@ module.exports = {
                     .setLabel('Privacy')
                     .setStyle('SECONDARY'),
                 new MessageButton()
-                    .setCustomId('tos')
+                    .setCustomId('tou')
                     .setLabel('Terms of Use')
                     .setStyle('SECONDARY'),
                 new MessageButton()
@@ -39,38 +39,30 @@ module.exports = {
                     .setDescription("Here's the detailed [Privacy Policy](https://qvnsecret.github.io/mytho/)")
                     .setColor("#2b2d31");
                 await i.reply({ embeds: [privacyEmbed], ephemeral: true });
-            } else if (i.customId === 'tos') {
+            } else if (i.customId === 'tou') {
                 const tosEmbed = new MessageEmbed()
                     .setTitle("Terms of Use")
                     .setDescription("Here's the detailed [Terms of Use](https://qvnsecret.github.io/mytho/)")
                     .setColor("#2b2d31");
                 await i.reply({ embeds: [tosEmbed], ephemeral: true });
             } else if (i.customId === 'all_commands') {
-                const categories = {};
+                const categories = { 'Info': [], 'Admin': [], 'Owner': [] }; // Predefined categories
                 client.commands.forEach(command => {
-                    const category = command.category || 'General';
-                    if (!categories[category]) {
-                        categories[category] = [];
+                    if (command.category && categories.hasOwnProperty(command.category)) {
+                        categories[command.category].push(`\`${command.name}\` - ${command.description}`);
                     }
-                    categories[category].push(`\`${command.name}\` - ${command.description}`);
                 });
 
                 const embeds = [];
-                Object.keys(categories).forEach(category => {
-                    const commandsEmbed = new MessageEmbed()
-                        .setTitle(`${category} Commands`)
-                        .setDescription(categories[category].join('\n'))
-                        .setColor("#2b2d31");
-
-                    if (commandsEmbed.length > 6000) {
-                        const splitDescriptions = splitEmbedDescription(categories[category]);
-                        splitDescriptions.forEach(desc => {
-                            embeds.push(new MessageEmbed().setTitle(`${category} Commands (cont.)`).setDescription(desc).setColor("#2b2d31"));
-                        });
-                    } else {
+                for (const category in categories) {
+                    if (categories[category].length > 0) {
+                        const commandsEmbed = new MessageEmbed()
+                            .setTitle(`${category} Commands`)
+                            .setDescription(categories[category].join('\n'))
+                            .setColor("#2b2d31");
                         embeds.push(commandsEmbed);
                     }
-                });
+                }
 
                 let currentPage = 0;
                 const botMessage = await i.reply({ embeds: [embeds[currentPage]], ephemeral: true, fetchReply: true });
@@ -79,21 +71,20 @@ module.exports = {
                     await botMessage.react('◀️');
                     await botMessage.react('▶️');
 
-                    const filter = (reaction, user) => ['◀️', '▶️'].includes(reaction.emoji.name) && user.id === i.user.id;
-                    const collector = botMessage.createReactionCollector({ filter, time: 60000 });
+                    const reactionFilter = (reaction, user) => ['◀️', '▶️'].includes(reaction.emoji.name) && user.id === i.user.id;
+                    const reactionCollector = botMessage.createReactionCollector({ filter: reactionFilter, time: 60000 });
 
-                    collector.on('collect', reaction => {
-                        reaction.users.remove(i.user);
-                        if (reaction.emoji.name === '▶️') {
-                            if (currentPage < embeds.length - 1) currentPage++;
-                        } else if (reaction.emoji.name === '◀️') {
-                            if (currentPage > 0) currentPage--;
+                    reactionCollector.on('collect', (reaction, user) => {
+                        reaction.users.remove(user.id);
+                        if (reaction.emoji.name === '▶️' && currentPage < embeds.length - 1) {
+                            currentPage++;
+                        } else if (reaction.emoji.name === '◀️' && currentPage > 0) {
+                            currentPage--;
                         }
-
                         botMessage.edit({ embeds: [embeds[currentPage]] });
                     });
 
-                    collector.on('end', () => {
+                    reactionCollector.on('end', () => {
                         botMessage.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
                     });
                 }
@@ -103,24 +94,3 @@ module.exports = {
         collector.on('end', collected => console.log(`Collected ${collected.size} items`));
     }
 };
-
-function splitEmbedDescription(descriptions) {
-    const maxChars = 2048;
-    let currentChunk = '';
-    const output = [];
-
-    descriptions.forEach(desc => {
-        if (currentChunk.length + desc.length > maxChars) {
-            output.push(currentChunk);
-            currentChunk = desc;
-        } else {
-            currentChunk += `\n${desc}`;
-        }
-    });
-
-    if (currentChunk.length > 0) {
-        output.push(currentChunk);
-    }
-
-    return output;
-}
