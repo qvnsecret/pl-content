@@ -1,43 +1,37 @@
-const { Client, Collection, MessageEmbed } = require("discord.js");
+const { Client, Intents, MessageEmbed, Collection } = require("discord.js");
 const client = new Client({
-    intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"],
-    allowedMentions: { parse: ['users', 'roles'], repliedUser: false },
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS]
 });
 
-// Setup configuration and handlers
 client.commands = new Collection();
 client.slashCommands = new Collection();
-client.config = require("./config.json");
-require("./handler")(client);
+client.config = require("./config.json"); // Ensure config.json exists and is configured properly
+require("./handler")(client); // Ensure this handler is properly set up for loading commands
 
-client.on('messageCreate', async message => {
-    // Ignore messages from bots to avoid loops
-    if (message.author.bot) return;
-
-    // Check if the message is in the specified channel
-    if (message.channel.id === '1230623201101484134') { // Use your specific channel ID here
-        try {
-            // Delete the message
-            await message.delete();
-
-            // Post or update the status embed
-            const embedMessage = await message.channel.messages.fetch({ limit: 1 });
-            if (embedMessage.size === 0) {
-                // If no previous message, send a new embed
-                message.channel.send({ embeds: [createEmbed()] });
-            } else {
-                // If there is a previous message, edit it
-                const lastMessage = embedMessage.first();
-                if (lastMessage.author.id === client.user.id) {
-                    lastMessage.edit({ embeds: [createEmbed()] });
-                } else {
-                    message.channel.send({ embeds: [createEmbed()] });
-                }
-            }
-        } catch (err) {
-            console.error('Failed to delete the message or send/update the embed:', err);
-        }
+client.on('ready', () => {
+    console.log(`Logged in as ${client.user.tag}!`);
+    const channel = client.channels.cache.get('1230623201101484134'); // Use your specific channel ID
+    if (!channel) {
+        console.log(`Channel with ID 1230623201101484134 not found.`);
+        return;
     }
+
+    // Initial embed send or update
+    channel.messages.fetch({ limit: 1 }).then(messages => {
+        const lastMessage = messages.first();
+        if (lastMessage && lastMessage.author.id === client.user.id) {
+            lastMessage.edit({ embeds: [createEmbed()] });
+        } else {
+            channel.send({ embeds: [createEmbed()] });
+        }
+    }).catch(console.error);
+});
+
+client.on('messageCreate', message => {
+    // Ignore messages from bots or if the message is not in the specified channel
+    if (message.author.bot || message.channel.id !== '1230623201101484134') return;
+
+    message.delete().catch(console.error); // Delete incoming messages safely with error handling
 });
 
 function createEmbed() {
@@ -67,6 +61,4 @@ function formatUptime(uptime) {
     return `${hours}h ${minutes}m ${seconds}s`;
 }
 
-client.login(process.env.token || client.config.token).catch(err => {
-    console.error('Failed to login:', err.message);
-});
+client.login(client.config.token).catch(console.error); // Ensure your token is correctly placed in config.json
