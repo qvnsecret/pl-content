@@ -1,27 +1,30 @@
 const { MessageEmbed } = require("discord.js");
 
 module.exports = {
-    name: "test",
-    description: "Developer only",
+    name: "TEST",
+    description: "A command that only the bot owner can use.",
     run: async (client, message, args) => {
-        // Check if the message author's ID matches the stored owner ID
-        if (message.author.id !== client.ownerID) {
+        // Replace 'YOUR_USER_ID' with your actual Discord User ID
+        const ownerID = '1213850979964035114';
+
+        if (message.author.id !== ownerID) {
             const embed = new MessageEmbed()
                 .setTitle("Unauthorized Access")
                 .setDescription(":x: This command can only be used by the bot owner.")
-                .setColor("#00FF00")  // Red color to indicate an error or restricted access
+                .setColor("#FF3A3A")  // Red color to indicate an error or restricted access
                 .setTimestamp();
 
             return message.reply({ embeds: [embed] });
         }
 
-        // Proceed with the command if the user is the owner
+        // If the user is the owner, proceed with the command
         const embed = new MessageEmbed()
-            .setTitle("Test")
-            .setDescription("👻 **A** *B* `C` ```D```")
-            .setColor("#00FF00")  // Green color to indicate success
+            .setTitle("Authorized Access")
+            .setDescription("🔱 | ```A``` `B` **C** *D*")
+            .setColor("#FF3A3A")  // Green color to indicate success
             .setTimestamp();
 
         message.reply({ embeds: [embed] });
     },
 };
+
