@@ -4,6 +4,7 @@ module.exports = {
     name: "help",
     description: "Displays general information about the bot.",
     run: async (client, message, args) => {
+        // Main Help Embed
         const embed = new MessageEmbed()
             .setTitle("Mytho Help")
             .setDescription("💼 Mytho, the Discord safeguard bot, is operated by Reduce and created by `ogqvnrvx`. For a comprehensive list of commands, please refer to our [documentation](https://qvnsecret.github.io/mytho/).")
@@ -11,6 +12,7 @@ module.exports = {
             .setFooter("Mytho™ - 2024/2025")
             .setTimestamp();
 
+        // Buttons setup
         const buttons = new MessageActionRow()
             .addComponents(
                 new MessageButton()
@@ -29,21 +31,22 @@ module.exports = {
 
         message.channel.send({ embeds: [embed], components: [buttons] });
 
+        // Collect button interactions
         const filter = i => i.user.id === message.author.id;
-        const collector = message.channel.createMessageComponentCollector({ filter, time: 15000 });
+        const collector = message.channel.createMessageComponentCollector({ filter, time: 60000 });
 
         collector.on('collect', async i => {
             if (i.customId === 'privacy') {
                 const privacyEmbed = new MessageEmbed()
                     .setTitle("Privacy Policy")
-                    .setDescription("Here's the detailed [Privacy Policy](https://qvnsecret.github.io/mytho/)")
-                    .setColor("#2b2d31");
+                    .setDescription("📄 Here's the detailed [Privacy Policy](https://qvnsecret.github.io/mytho/)")
+                    .setColor("#FF3A3A");
                 await i.reply({ embeds: [privacyEmbed], ephemeral: true });
             } else if (i.customId === 'tos') {
                 const tosEmbed = new MessageEmbed()
                     .setTitle("Terms of Use")
-                    .setDescription("Here's the detailed [Terms of Use](https://qvnsecret.github.io/mytho/)")
-                    .setColor("#2b2d31");
+                    .setDescription("📜 Here's the detailed [Terms of Use](https://qvnsecret.github.io/mytho/)")
+                    .setColor("#FF3A3A");
                 await i.reply({ embeds: [tosEmbed], ephemeral: true });
             } else if (i.customId === 'all_commands') {
                 const categories = {};
@@ -60,12 +63,12 @@ module.exports = {
                     const commandsEmbed = new MessageEmbed()
                         .setTitle(`${category} Commands`)
                         .setDescription(categories[category].join('\n'))
-                        .setColor("#2b2d31");
+                        .setColor("#FF3A3A");
 
-                    if (commandsEmbed.length > 6000) {
+                    if (commandsEmbed.description.length > 2048) {
                         const splitDescriptions = splitEmbedDescription(categories[category]);
                         splitDescriptions.forEach(desc => {
-                            embeds.push(new MessageEmbed().setTitle(`${category} Commands (cont.)`).setDescription(desc).setColor("#2b2d31"));
+                            embeds.push(new MessageEmbed().setTitle(`${category} Commands (cont.)`).setDescription(desc).setColor("#FF3A3A"));
                         });
                     } else {
                         embeds.push(commandsEmbed);
@@ -79,10 +82,10 @@ module.exports = {
                     await botMessage.react('◀️');
                     await botMessage.react('▶️');
 
-                    const filter = (reaction, user) => ['◀️', '▶️'].includes(reaction.emoji.name) && user.id === i.user.id;
-                    const collector = botMessage.createReactionCollector({ filter, time: 60000 });
+                    const reactionFilter = (reaction, user) => ['◀️', '▶️'].includes(reaction.emoji.name) && user.id === i.user.id;
+                    const reactionCollector = botMessage.createReactionCollector({ filter, time: 60000 });
 
-                    collector.on('collect', reaction => {
+                    reactionCollector.on('collect', reaction => {
                         reaction.users.remove(i.user);
                         if (reaction.emoji.name === '▶️') {
                             if (currentPage < embeds.length - 1) currentPage++;
@@ -93,7 +96,7 @@ module.exports = {
                         botMessage.edit({ embeds: [embeds[currentPage]] });
                     });
 
-                    collector.on('end', () => {
+                    reactionCollector.on('end', () => {
                         botMessage.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
                     });
                 }
@@ -105,16 +108,17 @@ module.exports = {
 };
 
 function splitEmbedDescription(descriptions) {
-    const maxChars = 2048;
+    const maxChars = 2048; // Maximum characters allowed in an embed description
     let currentChunk = '';
     const output = [];
 
     descriptions.forEach(desc => {
-        if (currentChunk.length + desc.length > maxChars) {
+        const potentialAddition = currentChunk.length === 0 ? desc : `\n${desc}`;
+        if (currentChunk.length + potentialAddition.length > maxChars) {
             output.push(currentChunk);
             currentChunk = desc;
         } else {
-            currentChunk += `\n${desc}`;
+            currentChunk += potentialAddition;
         }
     });
 
