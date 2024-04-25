@@ -8,7 +8,7 @@ module.exports = {
         if (message.author.id !== client.ownerID) {
             const embed = new MessageEmbed()
                 .setTitle("Unauthorized Access")
-                .setDescription("This command can only be used by the bot owner.")
+                .setDescription(":x: This command can only be used by the bot owner.")
                 .setColor("#00FF00")  // Red color to indicate an error or restricted access
                 .setTimestamp();
 
@@ -17,8 +17,8 @@ module.exports = {
 
         // Proceed with the command if the user is the owner
         const embed = new MessageEmbed()
-            .setTitle("Authorized Access")
-            .setDescription("Welcome, owner! What can I do for you today?")
+            .setTitle("Test")
+            .setDescription("👻 **A** *B* `C` ```D```")
             .setColor("#00FF00")  // Green color to indicate success
             .setTimestamp();
 
