@@ -7,7 +7,7 @@ module.exports = {
         // Main Help Embed
         const embed = new MessageEmbed()
             .setTitle("Mytho Help")
-            .setDescription("💼 Mytho, the Discord safeguard bot, is operated by Reduce and created by `ogqvnrvx`. For a comprehensive list of commands, please refer to our [documentation](https://qvnsecret.github.io/mytho/).")
+            .setDescription("<:mytho:1230996358081544222> Mytho, the Discord safeguard bot, is operated by Reduce and created by `ogqvnrvx`. For a comprehensive list of commands, please refer to our [documentation](https://qvnsecret.github.io/mytho/).")
             .setColor("#FF3A3A")
             .setFooter("Mytho™ - 2024/2025")
             .setTimestamp();
@@ -39,13 +39,13 @@ module.exports = {
             if (i.customId === 'privacy') {
                 const privacyEmbed = new MessageEmbed()
                     .setTitle("Privacy Policy")
-                    .setDescription("📄 Here's the detailed [Privacy Policy](https://qvnsecret.github.io/mytho/)")
+                    .setDescription("<:mytho:1230996358081544222> Here's the detailed [Privacy Policy](https://qvnsecret.github.io/mytho/)")
                     .setColor("#FF3A3A");
                 await i.reply({ embeds: [privacyEmbed], ephemeral: true });
             } else if (i.customId === 'tos') {
                 const tosEmbed = new MessageEmbed()
                     .setTitle("Terms of Use")
-                    .setDescription("📜 Here's the detailed [Terms of Use](https://qvnsecret.github.io/mytho/)")
+                    .setDescription("<:mytho:1230996358081544222> Here's the detailed [Terms of Use](https://qvnsecret.github.io/mytho/)")
                     .setColor("#FF3A3A");
                 await i.reply({ embeds: [tosEmbed], ephemeral: true });
             } else if (i.customId === 'all_commands') {
