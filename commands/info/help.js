@@ -8,7 +8,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setTitle("Mytho Help")
             .setDescription("<:mytho:1230996358081544222> Mytho, the Discord safeguard bot, is operated by Reduce and created by `ogqvnrvx`. For a comprehensive list of commands, please refer to our [documentation](https://qvnsecret.github.io/mytho/).")
-            .setColor("#FF3A3A")
+            .setColor("#2b2d31")
             .setFooter("Mytho™ - 2024/2025")
             .setTimestamp();
 
@@ -39,14 +39,14 @@ module.exports = {
             if (i.customId === 'privacy') {
                 const privacyEmbed = new MessageEmbed()
                     .setTitle("Privacy Policy")
-                    .setDescription("<:mytho:1230996358081544222> Here's the detailed [Privacy Policy](https://qvnsecret.github.io/mytho/)")
-                    .setColor("#FF3A3A");
+                    .setDescription("<:info:1233852686017892444> Here's the detailed [Privacy Policy](https://qvnsecret.github.io/mytho/)")
+                    .setColor("#2b2d31");
                 await i.reply({ embeds: [privacyEmbed], ephemeral: true });
             } else if (i.customId === 'tos') {
                 const tosEmbed = new MessageEmbed()
                     .setTitle("Terms of Use")
-                    .setDescription("<:mytho:1230996358081544222> Here's the detailed [Terms of Use](https://qvnsecret.github.io/mytho/)")
-                    .setColor("#FF3A3A");
+                    .setDescription("<:info:1233852686017892444> Here's the detailed [Terms of Use](https://qvnsecret.github.io/mytho/)")
+                    .setColor("#2b2d31");
                 await i.reply({ embeds: [tosEmbed], ephemeral: true });
             } else if (i.customId === 'all_commands') {
                 const categories = {};
@@ -61,9 +61,9 @@ module.exports = {
                 const embeds = [];
                 Object.keys(categories).forEach(category => {
                     const commandsEmbed = new MessageEmbed()
-                        .setTitle(`${category} Commands`)
+                        .setTitle(`<:setting:1233852666757648535> ${category} Commands`)
                         .setDescription(categories[category].join('\n'))
-                        .setColor("#FF3A3A");
+                        .setColor("#2b2d31");
 
                     if (commandsEmbed.description.length > 2048) {
                         const splitDescriptions = splitEmbedDescription(categories[category]);
