@@ -1,103 +1,79 @@
+const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const axios = require('axios');
+
 module.exports = {
   name: 'avatar',
-  description: "sending a target user avatar url.",
+  description: 'Sending a target user avatar URL.',
   aliases: ['av', 'avatar'],
-  utilisation: '{prefix}avatar [name | nickname | mention | ID]',
 
-  /**
-   * 
-   * @param {import("discord.js").Client} client 
-   * @param {import("discord.js").Message} message 
-   * @param {Array<string>} args 
-   * @returns 
-   */
   async execute(client, message, args) {
-    const Discord = require('discord.js');
-    const Member = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.member;
-    const axios = require("axios")
-    const { MessageButton, MessageActionRow } = require("discord-buttons");
-    await axios.get(`https://discord.com/api/users/${Member.id}`, {
-      headers: {
-        Authorization: `Bot ${client.config.discord.token}`
-      }
-    }).then((res) => {
-      function buttons() {
-        const { avatar } = res.data;
-        const btn1 = new MessageButton()
-          .setStyle('url')
-          .setLabel('Download Format PNG')
-          .setURL(`https://cdn.discordapp.com/avatars/${Member.id}/${avatar}.png?size=4096`)
+    const Member = getMember(message, args[0]);
 
-        const btn2 = new MessageButton()
-          .setStyle('url')
-          .setLabel('Download Format WEBP')
-          .setURL(`https://cdn.discordapp.com/avatars/${Member.id}/${avatar}.webp?size=4096`)
+    try {
+      const { data } = await axios.get(`https://discord.com/api/users/${Member.id}`, {
+        headers: {
+          Authorization: `Bot ${client.config.discord.token}`,
+        },
+      });
 
-        const btn3 = new MessageButton()
-          .setStyle('url')
-          .setLabel('Download Format JPEG')
-          .setURL(`https://cdn.discordapp.com/avatars/${Member.id}/${avatar}.jpeg?size=4096`)
+      const avatarURLs = getAvatarURLs(data.avatar, Member.id);
+      const bannerData = data.banner ? getBanner(data.banner, Member.id) : null;
+      const embed = createEmbed(data.accent_color, bannerData, Member, avatarURLs);
+      const buttons = createButtons(avatarURLs);
 
-        const btn4 = new MessageButton()
-          .setStyle('url')
-          .setLabel('Download Format GIF')
-          .setURL(`https://cdn.discordapp.com/avatars/${Member.id}/${avatar}.gif?size=4096`)
+      return message.channel.send({ embeds: [embed], components: [buttons] });
+    } catch (error) {
+      console.error(error);
+      return message.channel.send('An error occurred while fetching the user data.');
+    }
+  },
+};
 
-        const btn5 = new MessageButton()
-          .setStyle('url')
-          .setLabel('Download Format JPG')
-          .setURL(`https://cdn.discordapp.com/avatars/${Member.id}/${avatar}.jpg?size=4096`)
+function getMember(message, memberId) {
+  if (!memberId) memberId = message.author.id;
+  const member = message.mentions.members.first() || message.guild.members.cache.get(memberId) || message.member;
+  return member;
+}
 
-        const row = new MessageActionRow()
-          .addComponents(btn1, btn2, btn3, btn4, btn5)
+function getAvatarURLs(avatar, id) {
+  const avatarURLs = {
+    png: `https://cdn.discordapp.com/avatars/${id}/${avatar}.png?size=4096`,
+    webp: `https://cdn.discordapp.com/avatars/${id}/${avatar}.webp?size=4096`,
+    jpeg: `https://cdn.discordapp.com/avatars/${id}/${avatar}.jpeg?size=4096`,
+    gif: `https://cdn.discordapp.com/avatars/${id}/${avatar}.gif?size=4096`,
+    jpg: `https://cdn.discordapp.com/avatars/${id}/${avatar}.jpg?size=4096`,
+  };
+  return avatarURLs;
+}
 
-        return row;
-      }
-      const { banner, accent_color } = res.data;
-      if (banner) {
-        let extention = banner.startsWith("a_") ? ".gif" : ".png";
-        let url = `https://cdn.discordapp.com/banners/${Member.id}/${banner}${extention}?size=4096`;
-        let embed1 = new Discord.MessageEmbed()
-          .setTimestamp()
-          .setTitle(`**Avatar Of ${Member.user.tag}**`)
-          .setColor("#2b2d31")
-          .setURL(Member.user.displayAvatarURL({ size: 4096, dynamic: true }))
-          .setThumbnail(url)
-          .setImage(Member.user.displayAvatarURL({ size: 4096, dynamic: true }))
-          .setAuthor(`Requested By ${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
-          .setFooter(`Avatar Of ${Member.user.tag} |`, Member.user.displayAvatarURL({ size: 4096, dynamic: true }))
-          .setTimestamp()
+function getBanner(banner, id) {
+  const extention = banner.startsWith('a_') ? '.gif' : '.png';
+  const url = `https://cdn.discordapp.com/banners/${id}/${banner}${extention}?size=4096`;
+  return url;
+}
 
-        return message.channel.send(embed1, { components: [buttons()] });
-      } else {
-        if (accent_color) {
+function createEmbed(accentColor, bannerData, Member, avatarURLs) {
+  const embed = new MessageEmbed()
+    .setTimestamp()
+    .setTitle(`Avatar of ${Member.user.tag}`)
+    .setURL(Member.user.displayAvatarURL({ size: 4096, dynamic: true }))
+    .setColor(accentColor || '#2b2d31')
+    .setAuthor(`Requested by ${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
+    .setFooter(`Avatar of ${Member.user.tag}`, Member.user.displayAvatarURL({ size: 4096, dynamic: true }));
 
-          let embed2 = new Discord.MessageEmbed()
-            .setTimestamp()
-            .setTitle(`**Avatar Of ${Member.user.tag}**`)
-            .setURL(Member.user.displayAvatarURL({ size: 4096, dynamic: true }))
-            .setColor("#2b2d31")
-            .setImage(Member.user.displayAvatarURL({ size: 4096, dynamic: true }))
-            .setAuthor(`Requested By ${message.author.tag}`, message.author.displayAvatarURL({ size: 4096, dynamic: true }))
-            .setFooter(`Avatar Of ${Member.user.tag} |`, Member.user.displayAvatarURL({ size: 4096, dynamic: true }))
-            .setTimestamp()
+  if (bannerData) embed.setThumbnail(bannerData);
+  embed.setImage(avatarURLs.png);
 
-          return message.channel.send(embed2, { components: [buttons()] });
+  return embed;
+}
 
-        } else {
-          let embed3 = new Discord.MessageEmbed()
-            .setTimestamp()
-            .setTitle(`**Avatar Of ${Member.user.tag}**`)
-            .setURL(Member.user.displayAvatarURL({ size: 4096, dynamic: true }))
-            .setColor("#2b2d31")
-            .setImage(Member.user.displayAvatarURL({ size: 4096, dynamic: true }))
-            .setAuthor(`Requested By ${message.author.tag}`, message.author.displayAvatarURL({ size: 4096, dynamic: true }))
-            .setFooter(`Avatar Of ${Member.user.tag} |`, Member.user.displayAvatarURL({ size: 4096, dynamic: true }))
-            .setTimestamp()
-          return message.channel.send(embed3, { components: [buttons()] });
-        }
-      }
-    })
+function createButtons(avatarURLs) {
+  const btn1 = new MessageButton().setStyle('url').setLabel('Download PNG').setURL(avatarURLs.png);
+  const btn2 = new MessageButton().setStyle('url').setLabel('Download WEBP').setURL(avatarURLs.webp);
+  const btn3 = new MessageButton().setStyle('url').setLabel('Download JPEG').setURL(avatarURLs.jpeg);
+  const btn4 = new MessageButton().setStyle('url').setLabel('Download GIF').setURL(avatarURLs.gif);
+  const btn5 = new MessageButton().setStyle('url').setLabel('Download JPG').setURL(avatarURLs.jpg);
 
-  }
+  const row = new MessageActionRow().addComponents(btn1, btn2, btn3, btn4, btn5);
+  return row;
 }
