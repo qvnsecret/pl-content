@@ -1,57 +1,34 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 
 module.exports = {
     name: "ticketsetup",
-    cooldown: 5,
-    aliases: ["tic", "tsetup", "setupt"],
-    description: `Set up ticket system.`,
-    utilisation: '.ticketsetup',
+    category: 'Ticket 🎫',
+    description: "Sets up a ticket system in the channel.",
+    utilisation: '{prefix}ticketsetup',
 
     async execute(client, message, args) {
-        // Checking for permissions to manage messages
-        if (!message.member.permissions.has("MANAGE_MESSAGES")) {
-            return message.reply({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("You do not have permission to use this command.")] });
-        }
-
-        // Ensure that the ticket channel and admin role are mentioned
-        var ticketChannel = message.mentions.channels.first();
-        var adminRole = message.mentions.roles.first();
-        var title = args.slice(2).join(' ') || 'Ticket Bot';
-
-        if (!ticketChannel || !adminRole) {
+        if (!message.member.permissions.has("MANAGE_CHANNELS")) {
             return message.reply({
                 embeds: [new MessageEmbed()
                     .setColor("#2b2d31")
-                    .setDescription("Usage: .ticketsetup <#TicketChannel> <@AdminRole> [Optional Title]")]
+                    .setDescription("You don't have permission to set up tickets.")]
             });
         }
 
-        // Setting up the ticket creation message
         const button = new MessageButton()
-            .setStyle('PRIMARY')
+            .setCustomId('create_ticket')
             .setLabel('Create Ticket')
-            .setEmoji('🎟️')
-            .setCustomId('createTicket');
+            .setStyle('PRIMARY')
+            .setEmoji('🎟️');
 
         const row = new MessageActionRow().addComponents(button);
 
-        const initialMessageEmbed = new MessageEmbed()
-            .setColor('#2b2d31')
-            .setDescription('Click the button below to create a ticket.')
-            .setTitle(title);
+        const setupEmbed = new MessageEmbed()
+            .setColor("#2b2d31")
+            .setTitle('Ticket System')
+            .setDescription('Click the button below to create a new ticket.')
+            .setFooter('Ticket system setup');
 
-        ticketChannel.send({
-            embeds: [initialMessageEmbed],
-            components: [row]
-        }).then(() => {
-            message.reply({
-                embeds: [new MessageEmbed()
-                    .setColor("#2b2d31")
-                    .setDescription(`Ticket system setup complete in ${ticketChannel}`)]
-            });
-        }).catch(err => {
-            console.error(err);
-            message.channel.send({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("Failed to set up the ticket system.")] });
-        });
+        message.channel.send({ embeds: [setupEmbed], components: [row] });
     }
 };
