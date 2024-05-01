@@ -4,8 +4,7 @@ module.exports = {
     name: "ticketsetup",
     cooldown: 5,
     aliases: ["tic", "tsetup", "setupt"],
-    category: 'Ticket 🎫',
-    description: "Setup ticket channel",
+    description: `Set up ticket system.`,
     utilisation: '.ticketsetup',
 
     async execute(client, message, args) {
