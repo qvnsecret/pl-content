@@ -18,8 +18,8 @@ module.exports = {
 
         let embed = new MessageEmbed()
             .setTitle('Support & Invite')
-            .setDescription(`💧 | If you really wanna support us and [invite](https://discord.com/oauth2/authorize?client_id=1223343717184835754) our bot to reach our goal, we appreciate it a lot.\nWe are currently at \`${guildCount}\` guilds!`)
-            .setColor('#FF3A3A')
+            .setDescription(`<:share:1233852681982840932> If you really wanna support us and [invite](https://discord.com/oauth2/authorize?client_id=1223343717184835754) our bot to reach our goal, we appreciate it a lot.\nWe are currently at \`${guildCount}\` guilds!`)
+            .setColor('#2b2d31')
             .setTimestamp();
 
         message.reply({ embeds: [embed], components: [button] });
