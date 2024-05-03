@@ -1,47 +1,40 @@
 const { MessageEmbed, Permissions } = require("discord.js");
-const db = require('quick.db'); // Assuming using quick.db for database operations
+const db = require('quick.db'); // Using quick.db for simplicity in demonstration
 
 module.exports = {
     name: "automod",
-    description: "Activates or configures the automatic moderation system with safety setups.",
-    category: "Administration",
+    description: "Sets up basic AutoMod features such as keyword filtering and spam protection.",
+    category: "Moderation",
     usage: ".automod",
+    permissions: "ADMINISTRATOR",
 
     run: async (client, message, args) => {
-        // Check if the user has the administrator permission
         if (!message.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-            return message.channel.send({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("You do not have the necessary permissions to use this command.")] });
-        }
-
-        // Check if the server is already set up for AutoMod
-        const isSetup = db.get(`automod_setup_${message.guild.id}`);
-        if (isSetup) {
-            return message.channel.send({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("AutoMod is already configured on this server.")] });
-        }
-
-        // Send a loading message
-        const loadingMessage = await message.channel.send({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("Setting up AutoMod features, please wait...")] });
-
-        try {
-            // Create a quarantine role with no permissions to send messages or speak
-            const quarantineRole = await message.guild.roles.create({
-                data: {
-                    name: "Quarantine",
-                    color: "DARK_RED",
-                    permissions: []
-                },
-                reason: 'Used to quarantine users in case of rule violations'
+            return message.channel.send({
+                embeds: [new MessageEmbed()
+                    .setColor("#2b2d31")
+                    .setDescription("You do not have the necessary permissions to use this command.")]
             });
-
-            // Save setup to the database
-            db.set(`automod_setup_${message.guild.id}`, true);
-            db.set(`qrole_${message.guild.id}`, quarantineRole.id);
-
-            // Update the loading message to a success message
-            loadingMessage.edit({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("AutoMod has been successfully configured with safety measures.")] });
-        } catch (error) {
-            console.error("Failed to set up AutoMod:", error);
-            loadingMessage.edit({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("Failed to configure AutoMod. Please check the bot's permissions and try again.")] });
         }
+
+        // Example AutoMod settings to configure
+        const settings = {
+            "keywordFilter": ["badword1", "badword2"], // List of banned words
+            "spamProtection": true, // Toggle spam protection
+            "maxMessagesPerMinute": 10 // Maximum messages a user can send per minute
+        };
+
+        // Save settings to database
+        db.set(`automod_settings_${message.guild.id}`, settings);
+
+        // Notify about the setup completion
+        message.channel.send({
+            embeds: [new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription("AutoMod has been successfully set up with basic features.")]
+        });
+
+        // Optional: Here you can write code to add listeners or implement the moderation checks based on the settings
+        // Note: Actual implementation of checks needs to be handled in message events or similar depending on the bot's design
     }
 };
