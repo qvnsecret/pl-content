@@ -19,6 +19,9 @@ module.exports = {
             return message.channel.send({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("AutoMod is already configured on this server.")] });
         }
 
+        // Send a loading message
+        const loadingMessage = await message.channel.send({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("Setting up AutoMod features, please wait...")] });
+
         try {
             // Create a quarantine role with no permissions to send messages or speak
             const quarantineRole = await message.guild.roles.create({
@@ -34,11 +37,11 @@ module.exports = {
             db.set(`automod_setup_${message.guild.id}`, true);
             db.set(`qrole_${message.guild.id}`, quarantineRole.id);
 
-            // Response to the user
-            message.channel.send({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("AutoMod has been successfully configured with safety measures.")]});
+            // Update the loading message to a success message
+            loadingMessage.edit({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("AutoMod has been successfully configured with safety measures.")] });
         } catch (error) {
             console.error("Failed to set up AutoMod:", error);
-            message.channel.send({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("Failed to configure AutoMod. Please check the bot's permissions and try again.")]});
+            loadingMessage.edit({ embeds: [new MessageEmbed().setColor("#2b2d31").setDescription("Failed to configure AutoMod. Please check the bot's permissions and try again.")] });
         }
     }
 };
