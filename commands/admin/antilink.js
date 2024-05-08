@@ -2,7 +2,7 @@ const { MessageEmbed } = require("discord.js");
 
 module.exports = {
     name: "antilink",
-    description: "Configures the anti-link settings.",
+    description: "Blocks or removes links and sends a warning message.",
     run: async (client, message, args) => {
         const permission = message.member.permissions.has("MANAGE_MESSAGES");
 
@@ -16,18 +16,17 @@ module.exports = {
         // Check if the message content contains a link
         const linkRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
         if (linkRegex.test(message.content)) {
-            // Remove the message and send a message with a warning
-            message.delete().catch(console.error);
+            // Remove the link and send a message with a warning
+            const noLinkMessage = message.content.replace(linkRegex, '**[LINK REMOVED]**');
+            message.delete().catch(console.error); // delete the original message
             const embed = new MessageEmbed()
                 .setColor("#2b2d31")
-                .setDescription(`<@${message.author.id}>, you can't send links here.`)
-                .setTimestamp()
-                .setFooter(`Anti-link settings configured by ${message.author.tag}`);
+                .setDescription(`<@${message.author.id}>, you can't send links here.`);
             message.channel.send({ embeds: [embed] }).catch(err => console.log(`I couldn't send the message: ${err.message}`));
         } else {
             const embed = new MessageEmbed()
                 .setColor("#2b2d31")
-                .setDescription("**Anti-link settings configured.**");
+                .setDescription("**No link found in the message.**");
             message.reply({ embeds: [embed], ephemeral: true }).catch(err => console.log(`I couldn't reply to the message: ${err.message}`));
         }
     },
