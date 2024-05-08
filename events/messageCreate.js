@@ -3,7 +3,21 @@ const db = require('quick.db');  // Ensure you're using this database appropriat
 
 client.on("messageCreate", async (message) => {
     // Ignore all bots including itself, messages not from guilds, or messages that do not start with the prefix.
-    if (message.author.bot || !message.guild || !message.content.toLowerCase().startsWith(client.config.prefix))
+    if (message.author.bot || !message.guild)
+        return;
+
+    // Anti-Link Feature Check
+    const antilinkEnabled = db.get(`antilink_${message.guild.id}`);
+    if (antilinkEnabled) {
+        const linkRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+        if (linkRegex.test(message.content) && !message.member.permissions.has("MANAGE_MESSAGES")) {
+            await message.delete().catch(console.error);
+            return message.channel.send(`${message.author}, you can't send links here.`);
+        }
+    }
+
+    // Only continue if message starts with the prefix
+    if (!message.content.toLowerCase().startsWith(client.config.prefix))
         return;
 
     // Split message into command and arguments.
