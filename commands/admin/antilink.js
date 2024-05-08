@@ -1,33 +1,24 @@
 const { MessageEmbed } = require("discord.js");
+const db = require("./path/to/your/db"); // Path to your database file or module
 
 module.exports = {
     name: "antilink",
-    description: "Blocks or removes links and sends a warning message.",
+    description: "Toggles the anti-link settings for the server.",
     run: async (client, message, args) => {
-        const permission = message.member.permissions.has("MANAGE_MESSAGES");
-
-        if (!permission) {
+        if (!message.member.permissions.has("MANAGE_MESSAGES")) {
             const embed = new MessageEmbed()
                 .setColor("#2b2d31")
-                .setDescription("**You don't have permission to use this command**");
-            return message.reply({ embeds: [embed], ephemeral: true }).catch(err => console.log(`I couldn't reply to the message: ${err.message}`));
+                .setDescription("You don't have permission to configure anti-link settings.");
+            return message.reply({ embeds: [embed] });
         }
 
-        // Check if the message content contains a link
-        const linkRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
-        if (linkRegex.test(message.content)) {
-            // Remove the link and send a message with a warning
-            const noLinkMessage = message.content.replace(linkRegex, '**[LINK REMOVED]**');
-            message.delete().catch(console.error); // delete the original message
-            const embed = new MessageEmbed()
-                .setColor("#2b2d31")
-                .setDescription(`<@${message.author.id}>, you can't send links here.`);
-            message.channel.send({ embeds: [embed] }).catch(err => console.log(`I couldn't send the message: ${err.message}`));
-        } else {
-            const embed = new MessageEmbed()
-                .setColor("#2b2d31")
-                .setDescription("**No link found in the message.**");
-            message.reply({ embeds: [embed], ephemeral: true }).catch(err => console.log(`I couldn't reply to the message: ${err.message}`));
-        }
-    },
+        // Toggle the antilink setting
+        const antilinkEnabled = db.get(`antilink_${message.guild.id}`) || false;
+        db.set(`antilink_${message.guild.id}`, !antilinkEnabled);
+
+        const embed = new MessageEmbed()
+            .setColor("#2b2d31")
+            .setDescription(`Anti-link is now **${!antilinkEnabled ? "enabled" : "disabled"}**.`);
+        message.reply({ embeds: [embed] });
+    }
 };
