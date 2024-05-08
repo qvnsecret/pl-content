@@ -57,34 +57,6 @@ client.once('ready', () => {
     }).catch(console.error);
 });
 
-function createEmbed() {
-    const totalMembers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
-    const totalGuilds = client.guilds.cache.size;
-    const uptime = formatUptime(client.uptime);
-    const usedMemory = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
-    const botPing = client.ws.ping;
-
-    return new MessageEmbed()
-        .setColor("#2b2d31")
-        .setTitle("Bot Status")
-        .addField("Servers", totalGuilds.toString(), true)
-        .addField("Total Members", totalMembers.toString(), true)
-        .addField("Uptime", uptime, true)
-        .addField("Ping", `${botPing} ms`, true)
-        .addField("Memory Usage", `${usedMemory} MB`, true)
-        .setImage("https://cdn.discordapp.com/attachments/1223564129286230038/1232405905224630322/operational_2.gif?ex=662956f0&is=66280570&hm=08bd5615f78f2f44487443c8291c1c68f2d16edd0ab7fe6cfb36a6a9965ede61&")
-        .setTimestamp();
-}
-
-function formatUptime(uptime) {
-    let totalSeconds = (uptime / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    totalSeconds %= 3600;
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = Math.floor(totalSeconds % 60);
-    return `${hours}h ${minutes}m ${seconds}s`;
-}
-
 client.login(process.env.token || client.config.token).catch(err => {
     console.error(err.message);
 });
