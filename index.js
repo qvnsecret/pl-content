@@ -41,7 +41,6 @@ client.on('messageCreate', message => {
     }
 });
 
-
 const channelId = '1230623201101484134'; // Replace 'YOUR_CHANNEL_ID' with the ID of your desired channel
 
 client.once('ready', () => {
@@ -53,10 +52,15 @@ client.once('ready', () => {
         // Update the embed every 5 seconds
         setInterval(() => {
             sentMessage.edit({ embeds: [createEmbed()] }).catch(console.error);
-        }, 1000);
+        }, 5000); // Update every 5000ms (5 seconds)
     }).catch(console.error);
 });
 
 client.login(process.env.token || client.config.token).catch(err => {
     console.error(err.message);
 });
+
+// Function to create the embed
+function createEmbed() {
+    // Embed content goes here
+}
