@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const db = require("./path/to/your/db"); // Path to your database file or module
+const db = require("quick.db"); // Path to your database file or module
 
 module.exports = {
     name: "antilink",
