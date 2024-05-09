@@ -2,48 +2,27 @@ const { MessageEmbed } = require("discord.js");
 
 module.exports = {
     name: "embed",
-    description: "Creates a fully customizable embed based on user input.",
+    description: "Send a customizable embed message based on input parameters.",
     run: async (client, message, args) => {
-        if (!args.length) {
-            return message.reply({ content: "Please provide parameters for the embed. Example: .embed title=Example, description=This is an embed, color=#2b2d31", ephemeral: true });
-        }
-
-        // Join the args array back into a string and split it into properties
-        const input = args.join(" ");
-        const properties = input.split(',').reduce((acc, prop) => {
-            const [key, value] = prop.split('=').map(el => el.trim());
-            if (key && value) {
-                acc[key.toLowerCase()] = value;
-            }
+        // Join all arguments and split by ', ' to separate each field
+        const input = args.join(' ').split(', ').reduce((acc, curr) => {
+            const [key, value] = curr.split('=');
+            if (key && value) acc[key.trim()] = value.trim();
             return acc;
         }, {});
 
-        const embed = new MessageEmbed();
+        // Create a new embed and set properties based on input
+        const embed = new MessageEmbed().setColor(input.color || "#2b2d31");
 
-        // Apply properties to the embed
-        if (properties.title) {
-            embed.setTitle(properties.title);
-        }
-        if (properties.description) {
-            embed.setDescription(properties.description);
-        }
-        if (properties.color) {
-            embed.setColor(properties.color);
-        }
-        if (properties.footer) {
-            embed.setFooter(properties.footer);
-        }
-        if (properties.thumbnail) {
-            embed.setThumbnail(properties.thumbnail);
-        }
-        if (properties.image) {
-            embed.setImage(properties.image);
-        }
-        if (properties.url) {
-            embed.setURL(properties.url);
-        }
+        if (input.title) embed.setTitle(input.title);
+        if (input.description) embed.setDescription(input.description);
+        if (input.footer) embed.setFooter(input.footer);
+        if (input.image) embed.setImage(input.image);
+        if (input.thumbnail) embed.setThumbnail(input.thumbnail);
+        if (input.url) embed.setURL(input.url);
+        if (input.author) embed.setAuthor(input.author);
 
-        // Send the customized embed
+        // Send the embed to the channel
         message.channel.send({ embeds: [embed] }).catch(console.error);
-    }
+    },
 };
