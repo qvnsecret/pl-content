@@ -15,7 +15,7 @@ module.exports = {
                 new MessageButton()
                     .setStyle('LINK')
                     .setLabel('Vote us')
-                    .setURL('https://top.gg/bot/1223343717184835754/vote')
+                    .setURL('https://top.gg/bot/1223343717184835754/vote'))
             ));
 
         // To correctly display the number of guilds, you must fetch this from the client object
