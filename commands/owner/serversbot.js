@@ -9,7 +9,7 @@ module.exports = {
 
         // Check if the user invoking the command is the owner of the bot
         if (message.author.id !== ownerId) {
-            return message.reply("You do not have permission to use this command.");
+            return message.reply({ content: "You do not have permission to use this command.", ephemeral: true });
         }
 
         // Fetch all the guilds where the bot is present
@@ -21,7 +21,7 @@ module.exports = {
         // Iterate through each guild
         guilds.forEach(guild => {
             // Construct an invite link for the guild
-            guild.invite = `https://discord.gg/${guild.fetchInvites().then(invites => invites.first().code).catch(console.error)}`;
+            guild.invite = `https://discord.gg/${guild.fetchInvites().then(invites => invites.first().code).catch(() => "No invite available")}`;
 
             // Get the number of members and boosts in the guild
             const memberCount = guild.memberCount;
