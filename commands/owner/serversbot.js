@@ -3,10 +3,12 @@ const { MessageEmbed } = require("discord.js");
 module.exports = {
     name: "serversbot",
     description: "Displays information about servers where the bot is present.",
-    ownerOnly: true, // Only the owner of the bot can use this command
     run: async (client, message, args) => {
+        // Your Discord ID as the bot owner
+        const ownerId = "1213850979964035114";
+
         // Check if the user invoking the command is the owner of the bot
-        if (message.author.id !== client.ownerId) {
+        if (message.author.id !== ownerId) {
             return message.reply("You do not have permission to use this command.");
         }
 
