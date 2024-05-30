@@ -15,7 +15,6 @@ module.exports = {
                 new MessageButton()
                     .setCustomId('edit_embed')
                     .setLabel('Edit')
-                    .setEmoji('📝')
                     .setStyle('PRIMARY'),
                 new MessageButton()
                     .setCustomId('send_embed')
