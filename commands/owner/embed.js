@@ -1,37 +1,101 @@
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, MessageActionRow, MessageButton, Modal, TextInputComponent } = require('discord.js');
 
 module.exports = {
     name: "embed",
-    description: "Send a customizable embed message based on input parameters, allowing images as attachments.",
+    description: "Create and send a customizable embed message.",
     run: async (client, message, args) => {
-        // Join all arguments and split by ', ' to separate each field
-        const input = args.join(' ').split(', ').reduce((acc, curr) => {
-            const [key, value] = curr.split('=');
-            if (key && value) acc[key.trim()] = value.trim();
-            return acc;
-        }, {});
+        // Create the initial embed with a placeholder text
+        const initialEmbed = new MessageEmbed()
+            .setDescription('This is a placeholder embed. Use the buttons below to edit and send.')
+            .setColor('#2b2d31');
 
-        // Create a new embed and set properties based on input
-        const embed = new MessageEmbed().setColor(input.color || "#2b2d31");
+        // Create the buttons
+        const row = new MessageActionRow()
+            .addComponents(
+                new MessageButton()
+                    .setCustomId('edit_embed')
+                    .setLabel('Edit')
+                    .setEmoji('📝')
+                    .setStyle('PRIMARY'),
+                new MessageButton()
+                    .setCustomId('send_embed')
+                    .setLabel('Send')
+                    .setEmoji('📤')
+                    .setStyle('SUCCESS')
+            );
 
-        if (input.title) embed.setTitle(input.title);
-        if (input.description) embed.setDescription(input.description);
-        if (input.footer) embed.setFooter(input.footer);
-        if (input.url) embed.setURL(input.url);
-        if (input.author) embed.setAuthor(input.author);
+        // Send the embed with buttons
+        const reply = await message.reply({ embeds: [initialEmbed], components: [row], ephemeral: true });
 
-        // Check for image in the command or use the first attachment if available
-        if (message.attachments.size > 0) {
-            const imageAttachment = message.attachments.first(); // Get the first attachment
-            embed.setImage(imageAttachment.url);
-        } else if (input.image) {
-            embed.setImage(input.image);
-        }
+        // Handle button clicks
+        const filter = (interaction) => interaction.user.id === message.author.id;
+        const collector = reply.createMessageComponentCollector({ filter, componentType: 'BUTTON', time: 60000 });
 
-        if (input.thumbnail) embed.setThumbnail(input.thumbnail);
+        collector.on('collect', async (interaction) => {
+            if (interaction.customId === 'edit_embed') {
+                // Create a modal for editing the embed
+                const modal = new Modal()
+                    .setCustomId('edit_embed_modal')
+                    .setTitle('Edit Embed')
+                    .addComponents(
+                        new TextInputComponent()
+                            .setCustomId('embed_title')
+                            .setLabel('Title')
+                            .setStyle('SHORT')
+                            .setRequired(false),
+                        new TextInputComponent()
+                            .setCustomId('embed_description')
+                            .setLabel('Description')
+                            .setStyle('PARAGRAPH')
+                            .setRequired(false),
+                        new TextInputComponent()
+                            .setCustomId('embed_color')
+                            .setLabel('Color')
+                            .setStyle('SHORT')
+                            .setRequired(false),
+                        new TextInputComponent()
+                            .setCustomId('embed_footer')
+                            .setLabel('Footer')
+                            .setStyle('SHORT')
+                            .setRequired(false)
+                    );
 
-        // Send the embed to the channel
-        message.channel.send({ embeds: [embed] }).catch(console.error);
+                await interaction.showModal(modal);
+            }
+
+            if (interaction.customId === 'send_embed') {
+                const editedEmbed = interaction.message.embeds[0];
+
+                if (!editedEmbed.title && !editedEmbed.description) {
+                    await interaction.reply({ content: 'Error: You must edit the embed before sending.', ephemeral: true });
+                    return;
+                }
+
+                await message.channel.send({ embeds: [editedEmbed] });
+                await interaction.reply({ content: 'Embed sent successfully.', ephemeral: true });
+            }
+        });
+
+        client.on('interactionCreate', async (interaction) => {
+            if (!interaction.isModalSubmit()) return;
+
+            if (interaction.customId === 'edit_embed_modal') {
+                const title = interaction.fields.getTextInputValue('embed_title');
+                const description = interaction.fields.getTextInputValue('embed_description');
+                const color = interaction.fields.getTextInputValue('embed_color') || '#2b2d31';
+                const footer = interaction.fields.getTextInputValue('embed_footer');
+
+                const editedEmbed = new MessageEmbed()
+                    .setColor(color);
+
+                if (title) editedEmbed.setTitle(title);
+                if (description) editedEmbed.setDescription(description);
+                if (footer) editedEmbed.setFooter(footer);
+
+                interaction.message.embeds[0] = editedEmbed;
+                await interaction.message.edit({ embeds: [editedEmbed] });
+                await interaction.reply({ content: 'Embed edited successfully.', ephemeral: true });
+            }
+        });
     },
 };
-
