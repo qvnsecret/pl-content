@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageActionRow, MessageButton, Modal, TextInputComponent } = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageButton, Modal, TextInputComponent, TextInputStyle, InteractionType } = require('discord.js');
 
 module.exports = {
     name: "embed",
@@ -24,7 +24,7 @@ module.exports = {
             );
 
         // Send the embed with buttons
-        const reply = await message.reply({ embeds: [initialEmbed], components: [row], ephemeral: true });
+        const reply = await message.reply({ embeds: [initialEmbed], components: [row] });
 
         // Handle button clicks
         const filter = (interaction) => interaction.user.id === message.author.id;
@@ -37,26 +37,34 @@ module.exports = {
                     .setCustomId('edit_embed_modal')
                     .setTitle('Edit Embed')
                     .addComponents(
-                        new TextInputComponent()
-                            .setCustomId('embed_title')
-                            .setLabel('Title')
-                            .setStyle('SHORT')
-                            .setRequired(false),
-                        new TextInputComponent()
-                            .setCustomId('embed_description')
-                            .setLabel('Description')
-                            .setStyle('PARAGRAPH')
-                            .setRequired(false),
-                        new TextInputComponent()
-                            .setCustomId('embed_color')
-                            .setLabel('Color')
-                            .setStyle('SHORT')
-                            .setRequired(false),
-                        new TextInputComponent()
-                            .setCustomId('embed_footer')
-                            .setLabel('Footer')
-                            .setStyle('SHORT')
-                            .setRequired(false)
+                        new MessageActionRow().addComponents(
+                            new TextInputComponent()
+                                .setCustomId('embed_title')
+                                .setLabel('Title')
+                                .setStyle(TextInputStyle.Short)
+                                .setRequired(false)
+                        ),
+                        new MessageActionRow().addComponents(
+                            new TextInputComponent()
+                                .setCustomId('embed_description')
+                                .setLabel('Description')
+                                .setStyle(TextInputStyle.Paragraph)
+                                .setRequired(false)
+                        ),
+                        new MessageActionRow().addComponents(
+                            new TextInputComponent()
+                                .setCustomId('embed_color')
+                                .setLabel('Color')
+                                .setStyle(TextInputStyle.Short)
+                                .setRequired(false)
+                        ),
+                        new MessageActionRow().addComponents(
+                            new TextInputComponent()
+                                .setCustomId('embed_footer')
+                                .setLabel('Footer')
+                                .setStyle(TextInputStyle.Short)
+                                .setRequired(false)
+                        )
                     );
 
                 await interaction.showModal(modal);
@@ -91,7 +99,6 @@ module.exports = {
                 if (description) editedEmbed.setDescription(description);
                 if (footer) editedEmbed.setFooter(footer);
 
-                interaction.message.embeds[0] = editedEmbed;
                 await interaction.message.edit({ embeds: [editedEmbed] });
                 await interaction.reply({ content: 'Embed edited successfully.', ephemeral: true });
             }
