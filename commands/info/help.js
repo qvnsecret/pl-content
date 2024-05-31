@@ -6,8 +6,8 @@ module.exports = {
     run: async (client, message, args) => {
         // Main Help Embed
         const embed = new MessageEmbed()
-            .setTitle("Mytho Help")
-            .setDescription("<:home:1233852688857563166> Mytho, the Discord safeguard bot, is operated by Reduce and created by `ogqvnrvx`. For a comprehensive list of commands, please refer to our [documentation](https://qvnsecret.github.io/mytho/).")
+            .setTitle("ONbot Help")
+            .setDescription("<:home:1233852688857563166> ONbot, the Discord safeguard bot, is operated by Reduce and created by `ogqvnrvx`. For a comprehensive list of commands, please refer to our [documentation](https://qvnsecret.github.io/mytho/).")
             .setColor("#2b2d31")
             .setFooter("Mytho™ - 2024/2025")
             .setTimestamp();
