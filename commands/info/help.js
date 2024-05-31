@@ -39,13 +39,13 @@ module.exports = {
             if (i.customId === 'privacy') {
                 const privacyEmbed = new MessageEmbed()
                     .setTitle("Privacy Policy")
-                    .setDescription("<:info:1233852686017892444> Here's the detailed [Privacy Policy](https://qvnsecret.github.io/mytho/)")
+                    .setDescription("<:info:1233852686017892444> Here's the detailed [Privacy Policy](https://onbott.vercel.app/privacy)")
                     .setColor("#2b2d31");
                 await i.reply({ embeds: [privacyEmbed], ephemeral: true });
             } else if (i.customId === 'tos') {
                 const tosEmbed = new MessageEmbed()
                     .setTitle("Terms of Use")
-                    .setDescription("<:info:1233852686017892444> Here's the detailed [Terms of Use](https://qvnsecret.github.io/mytho/)")
+                    .setDescription("<:info:1233852686017892444> Here's the detailed [Terms of Use](https://onbott.vercel.app/tos)")
                     .setColor("#2b2d31");
                 await i.reply({ embeds: [tosEmbed], ephemeral: true });
             } else if (i.customId === 'all_commands') {
@@ -62,7 +62,7 @@ module.exports = {
                 Object.keys(categories).forEach(category => {
                     const commandsEmbed = new MessageEmbed()
                         .setTitle(`<:setting:1233852666757648535> ${category} Commands`)
-                        .setDescription(categories[category].join('\n'))
+                        .setDescription("<:info:1233852686017892444> Check here for [Commands](https://onbott.vercel.app/commands)")
                         .setColor("#2b2d31");
 
                     if (commandsEmbed.description.length > 2048) {
