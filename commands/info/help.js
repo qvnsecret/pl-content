@@ -61,7 +61,7 @@ module.exports = {
                 const embeds = [];
                 Object.keys(categories).forEach(category => {
                     const commandsEmbed = new MessageEmbed()
-                        .setTitle(`<:setting:1233852666757648535> ${category} Commands`)
+                        .setTitle(`Commands`)
                         .setDescription("<:info:1233852686017892444> Check here for [Commands](https://onbott.vercel.app/commands)")
                         .setColor("#2b2d31");
 
