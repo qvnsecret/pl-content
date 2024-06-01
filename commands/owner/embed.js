@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discor Chd.js");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
     name: "embed",
