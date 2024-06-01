@@ -19,8 +19,11 @@ module.exports = {
         const memoryUsage = `${usedMemory} MB / ${totalMemory} MB`;
 
         const embed = new MessageEmbed()
-            .setTitle('Mytho Stats')
-            .setDescription(`Guilds: \`${guilds.size}\` - Members: \`${totalMembers}\` - Uptime: \`${uptime}\` - Memory: \`${memoryUsage}\``)
+            .setTitle('ONbot Stats')
+            .setDescription(`<:home:1233852688857563166> Guilds: \`${guilds.size}\` 
+<:member:1233853218107424890> Members: \`${totalMembers}\` 
+<:ping:1233853207323611236> Uptime: \`${uptime}\`
+<:rocket:1233852661753970749> Memory: \`${memoryUsage}\``)
             .setColor(`#2b2d31`)
             .setTimestamp();
 
