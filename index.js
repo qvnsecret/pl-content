@@ -39,7 +39,7 @@ client.on('messageCreate', message => {
     if (message.mentions.has(client.user.id) && !message.mentions.everyone && !message.author.bot) {
         const embed = new MessageEmbed()
             .setColor("#2b2d31")
-            .setDescription("My prefix is `.`\nIf you want more info, type `.help` to see all the commands available.");
+            .setDescription("My prefix is `?`\nIf you want more info, type `?help` to see all the commands available.");
 
         message.reply({ embeds: [embed] });
     }
