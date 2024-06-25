@@ -1,24 +1,37 @@
-const { MessageEmbed } = require("discord.js");
-const db = require("quick.db"); // Path to your database file or module
+const { MessageEmbed, Permissions } = require("discord.js");
+const db = require('quick.db');
 
 module.exports = {
     name: "antilink",
-    description: "Toggles the anti-link settings for the server.",
+    description: "Enables or disables anti-link protection in the server.",
+    category: "Moderation",
+    usage: ".antilink <on|off>",
+    permissions: "ADMINISTRATOR",
+
     run: async (client, message, args) => {
-        if (!message.member.permissions.has("MANAGE_MESSAGES")) {
-            const embed = new MessageEmbed()
-                .setColor("#2b2d31")
-                .setDescription("You don't have permission to configure anti-link settings.");
-            return message.reply({ embeds: [embed] });
+        if (!message.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+            return message.channel.send({
+                embeds: [new MessageEmbed()
+                    .setColor("#2b2d31")
+                    .setDescription("You do not have the necessary permissions to use this command.")]
+            });
         }
 
-        // Toggle the antilink setting
-        const antilinkEnabled = db.get(`antilink_${message.guild.id}`) || false;
-        db.set(`antilink_${message.guild.id}`, !antilinkEnabled);
+        if (!args[0] || !['on', 'off'].includes(args[0])) {
+            return message.channel.send({
+                embeds: [new MessageEmbed()
+                    .setColor("#2b2d31")
+                    .setDescription("Invalid usage. Please use `.antilink <on|off>`.")]
+            });
+        }
 
-        const embed = new MessageEmbed()
-            .setColor("#2b2d31")
-            .setDescription(`Anti-link is now **${!antilinkEnabled ? "enabled" : "disabled"}**.`);
-        message.reply({ embeds: [embed] });
+        const setting = args[0] === 'on';
+        db.set(`antilink_${message.guild.id}`, setting);
+
+        message.channel.send({
+            embeds: [new MessageEmbed()
+                .setColor("#2b2d31")
+                .setDescription(`Anti-link protection has been ${setting ? 'enabled' : 'disabled'}.`)]
+        });
     }
 };
