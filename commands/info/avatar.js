@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js");
+const { EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require("discord.js");
 
 module.exports = {
   name: "avatar",
@@ -16,43 +16,44 @@ module.exports = {
       jpg: Member.user.displayAvatarURL({ format: 'jpg', size: 4096 })
     };
 
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
       .setTimestamp()
       .setTitle(`Avatar of ${Member.user.tag}`)
       .setURL(Member.user.displayAvatarURL({ size: 4096, dynamic: true }))
       .setColor("#2b2d31")
-      .setAuthor(`Requested by ${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
+      .setAuthor({ name: `Requested by ${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) })
       .setImage(avatarURLs.png)
-      .setFooter(`Avatar of ${Member.user.tag}`, Member.user.displayAvatarURL({ size: 4096, dynamic: true }));
+      .setFooter({ text: `Avatar of ${Member.user.tag}`, iconURL: Member.user.displayAvatarURL({ size: 4096, dynamic: true }) });
 
-    let button1 = new MessageButton()
-      .setStyle('LINK')
+    let button1 = new ButtonBuilder()
+      .setStyle(ButtonStyle.Link)
       .setLabel('Download PNG')
       .setURL(avatarURLs.png);
 
-    let button2 = new MessageButton()
-      .setStyle('LINK')
+    let button2 = new ButtonBuilder()
+      .setStyle(ButtonStyle.Link)
       .setLabel('Download WEBP')
       .setURL(avatarURLs.webp);
 
-    let button3 = new MessageButton()
-      .setStyle('LINK')
+    let button3 = new ButtonBuilder()
+      .setStyle(ButtonStyle.Link)
       .setLabel('Download JPEG')
       .setURL(avatarURLs.jpeg);
 
-    let button4 = new MessageButton()
-      .setStyle('LINK')
+    let button4 = new ButtonBuilder()
+      .setStyle(ButtonStyle.Link)
       .setLabel('Download GIF')
       .setURL(avatarURLs.gif);
 
-    let button5 = new MessageButton()
-      .setStyle('LINK')
+    let button5 = new ButtonBuilder()
+      .setStyle(ButtonStyle.Link)
       .setLabel('Download JPG')
       .setURL(avatarURLs.jpg);
 
-    let row = new MessageActionRow()
+    let row = new ActionRowBuilder()
       .addComponents(button1, button2, button3, button4, button5);
 
     message.reply({ embeds: [embed], components: [row] });
   },
 };
+
